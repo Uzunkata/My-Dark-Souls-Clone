@@ -165,6 +165,34 @@
                     "isPartOfComposite": true
                 }
             ]
+        },
+        {
+            "name": "Player Actions",
+            "id": "ab7d182d-f510-4461-967c-2e74d81dd1eb",
+            "actions": [
+                {
+                    "name": "Dodge",
+                    "type": "Button",
+                    "id": "bdf0e186-41b1-40b0-b4e8-208efeb12428",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "d35d9e77-acd2-41c9-8927-1033b15c86fd",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Dodge",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []

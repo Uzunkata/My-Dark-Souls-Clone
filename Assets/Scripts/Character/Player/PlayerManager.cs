@@ -5,9 +5,12 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(PlayerAnimatorManager))]
 public class PlayerManager : CharacterManager
 {
-
     [HideInInspector] private PlayerLocomotionManager playerLocomotionManager;
     [HideInInspector] private PlayerAnimatorManager playerAnimatorManager;
+
+    public PlayerLocomotionManager PlayerLocomotionManager => playerLocomotionManager;
+    public PlayerAnimatorManager PlayerAnimatorManager => playerAnimatorManager;
+
     protected override void Awake()
     {
         base.Awake();
@@ -52,7 +55,4 @@ public class PlayerManager : CharacterManager
 
         PlayerCamera.GetInstance.HandleAllCameraActions();
     }
-
-    public PlayerAnimatorManager PlayerAnimatorManager => playerAnimatorManager;
-
 }

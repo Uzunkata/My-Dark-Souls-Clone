@@ -4,20 +4,19 @@ using UnityEngine;
 public class PlayerLocomotionManager : CharacterLocomotionManager
 {
     PlayerManager player;
-    private float verticalMovement;
-    private float horizontalMovement;
-    private float moveAmount;
+    [HideInInspector] private float verticalMovement;
+    [HideInInspector] private float horizontalMovement;
+    [HideInInspector] private float moveAmount;
 
+    [Header("Movement Settings")]
     private Vector3 moveDirection;
     private Vector3 targetRotationDirection;
-
-    [SerializeField]
-    private float walkingSpeed = 2;
-    [SerializeField]
-    private float runningSpeed = 5;
-    [SerializeField]
-    private float rotationSpeed = 15;
+    [SerializeField] private float walkingSpeed = 2;
+    [SerializeField] private float runningSpeed = 5;
+    [SerializeField] private float rotationSpeed = 15;
     
+    [Header("Dodge")]
+    private Vector3 rollDirection;
 
     protected override void Awake()
     {
@@ -32,15 +31,15 @@ public class PlayerLocomotionManager : CharacterLocomotionManager
 
         if (player.IsOwner)
         {
-            player.CharacterNetworkManager.SetVerticalMovement(verticalMovement);
-            player.CharacterNetworkManager.SetHorizontalMovement(horizontalMovement);
-            player.CharacterNetworkManager.SetMoveAmount(moveAmount);
+            player.CharacterNetworkManager.VerticalMovement = verticalMovement;
+            player.CharacterNetworkManager.HorizontalMovement = horizontalMovement;
+            player.CharacterNetworkManager.MoveAmount = moveAmount;
         }
         else
         {
-            verticalMovement = player.CharacterNetworkManager.GetVerticalMovement();
-            horizontalMovement = player.CharacterNetworkManager.GetVerticalMovement();
-            moveAmount = player.CharacterNetworkManager.GetMoveAmount();
+            verticalMovement = player.CharacterNetworkManager.VerticalMovement;
+            horizontalMovement = player.CharacterNetworkManager.VerticalMovement;
+            moveAmount = player.CharacterNetworkManager.MoveAmount;
 
             player.PlayerAnimatorManager.UpdateAnimatorMovementParameters(0, moveAmount);
         }
@@ -65,6 +64,9 @@ public class PlayerLocomotionManager : CharacterLocomotionManager
 
     private void HandleGroundMovement()
     {
+        if (!player.CanMove)
+            return;
+
         GetVerticalAndHorizontalInputs();
         //our movement direction is based on camera facing perspective and our inputs (WASD)
         moveDirection = PlayerCamera.GetInstance.transform.forward * verticalMovement;
@@ -93,6 +95,9 @@ public class PlayerLocomotionManager : CharacterLocomotionManager
 
     private void HandleRotation()
     {
+        if (!player.CanRotate)
+            return;
+
        targetRotationDirection = Vector3.zero;
        targetRotationDirection = PlayerCamera.GetInstance.GetCameraObject().transform.forward * verticalMovement;
        targetRotationDirection = targetRotationDirection + PlayerCamera.GetInstance.GetCameraObject().transform.right * horizontalMovement;
@@ -109,4 +114,30 @@ public class PlayerLocomotionManager : CharacterLocomotionManager
         transform.rotation = targetRotation;
     }
 
+    public void AttemptToPerformDodge()
+    {
+        if (player.IsPerformingAction)
+            return;
+
+        //if we are moving, performe a roll
+        if (moveAmount > 0)
+        {
+            rollDirection = PlayerCamera.GetInstance.GetCameraObject().transform.forward * verticalMovement;
+            //rollDirection = PlayerCamera.GetInstance.GetCameraObject().transform.forward * PlayerInputManager.GetInstance.PlayerVerticalInput;
+            rollDirection += PlayerCamera.GetInstance.GetCameraObject().transform.right * horizontalMovement;
+            //rollDirection += PlayerCamera.GetInstance.GetCameraObject().transform.right * PlayerInputManager.GetInstance.PlayerHorizontalInput;
+            rollDirection.y = 0;
+            rollDirection.Normalize();
+
+            Quaternion playerRotation = Quaternion.LookRotation(rollDirection);
+            player.transform.rotation = playerRotation;
+
+            player.PlayerAnimatorManager.PlayTargetActionAnimation("Roll_Forward_01", true);
+        }
+        //if we are not moving, performe a backstep
+        else
+        {
+            player.PlayerAnimatorManager.PlayTargetActionAnimation("Back_Step_01", true);
+        }
+    }
 }

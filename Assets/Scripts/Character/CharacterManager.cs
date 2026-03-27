@@ -10,6 +10,36 @@ public class CharacterManager : NetworkBehaviour
     [HideInInspector] protected Animator animator;
     [HideInInspector] private CharacterNetworkManager characterNetworkManager;
 
+    [Header("Flags")]
+    [SerializeField] private bool isPerformingAction = false;
+    [SerializeField] private bool applyRootMotion = false;
+    [SerializeField] private bool canRotate = true;
+    [SerializeField] private bool canMove = true;
+
+    public Animator Animator => animator;
+    public CharacterNetworkManager CharacterNetworkManager => characterNetworkManager;
+
+    public bool IsPerformingAction
+    {
+        get => isPerformingAction;
+        set => isPerformingAction = value;
+    } 
+    public bool ApplyRootMotion
+    {
+        get => applyRootMotion;
+        set => applyRootMotion = value;
+    } 
+    public bool CanRotate
+    {
+        get => canRotate;
+        set => canRotate = value;
+    } 
+    public bool CanMove
+    {
+        get => canMove;
+        set => canMove = value;
+    } 
+
     //Since our player gameObjects are connected to the Network Manager,
     //they get created with it when we host a game (so when we start the game).
     //we want to preserve this player model for other scenes, so that we can maintain
@@ -29,8 +59,8 @@ public class CharacterManager : NetworkBehaviour
         //then assign its position to the network position
         if (IsOwner)
         {
-            characterNetworkManager.SetNetworkPosition(transform.position);
-            characterNetworkManager.SetNetworkRotation(transform.rotation);
+            characterNetworkManager.NetworkPosition = transform.position;
+            characterNetworkManager.NetworkRotation = transform.rotation;
         }
         //if this character is being controlled from else where,
         //then assing its position here localy by the position of its
@@ -41,14 +71,14 @@ public class CharacterManager : NetworkBehaviour
             transform.position 
                 = Vector3.SmoothDamp(
                     transform.position, 
-                    characterNetworkManager.GetNetworkPosition(), 
+                    characterNetworkManager.NetworkPosition, 
                     ref characterNetworkManager.networkPositionVelocity,        //TODO: what do i do about this????
                     characterNetworkManager.NetworkPositionSmoothTime);
             //  Rotation
             transform.rotation
                 = Quaternion.Slerp(
                     transform.rotation, 
-                    characterNetworkManager.GetNetworkRotation(), 
+                    characterNetworkManager.NetworkRotation, 
                     characterNetworkManager.NetworkRotationSmoothTime);
         }
     }
@@ -62,7 +92,5 @@ public class CharacterManager : NetworkBehaviour
     {
         
     }
-    public Animator Animator => animator;
-    public CharacterNetworkManager CharacterNetworkManager => characterNetworkManager;
 
 }

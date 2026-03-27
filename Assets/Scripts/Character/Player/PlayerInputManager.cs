@@ -16,6 +16,10 @@ public class PlayerInputManager : MonoBehaviour
         CONTROLLER
     }
 
+    [Header("Camera Movement Input")]
+    [SerializeField] private Vector2 cameraMovementInput;
+    [SerializeField] private float cameraVerticalInput;
+    [SerializeField] private float cameraHorizontalInput;
 
     [Header("Player Movement Input")]
     [SerializeField] private InputSystem inputSystem = InputSystem.KEYBOARD;
@@ -24,10 +28,8 @@ public class PlayerInputManager : MonoBehaviour
     [SerializeField] private float playerHorizontalInput;
     [SerializeField] private float moveAmount;
 
-    [Header("Camera Movement Input")]
-    [SerializeField] private Vector2 cameraMovementInput;
-    [SerializeField] private float cameraVerticalInput;
-    [SerializeField] private float cameraHorizontalInput;
+    [Header("Player Action Input")]
+    [SerializeField] private bool dodgeInput = false;
 
     public static PlayerInputManager GetInstance
     {
@@ -92,6 +94,7 @@ public class PlayerInputManager : MonoBehaviour
 
             playerControls.PlayerMovement.Movement.performed += i => playerMovementInput = i.ReadValue<Vector2>();
             playerControls.CameraMovement.Movement.performed += i => cameraMovementInput = i.ReadValue<Vector2>();
+            playerControls.PlayerActions.Dodge.performed += i => dodgeInput = true;
         }
 
         playerControls.Enable();
@@ -106,10 +109,17 @@ public class PlayerInputManager : MonoBehaviour
     private void Update()
     {
         //we want this to be updated every single frame we are using the keyboard
-        HandlePlayerMovementInput();
-        HandeCameraMovementInput();
+        HandleAllInputs();
     }
 
+    private void HandleAllInputs()
+    {
+        HandeCameraMovementInput();
+        HandlePlayerMovementInput();
+        HandleDodgeInput();
+    }
+
+    //  MOVEMENT
     private void HandlePlayerMovementInput()
     {
         playerVerticalInput = playerMovementInput.y;
@@ -176,4 +186,15 @@ public class PlayerInputManager : MonoBehaviour
         }
     }
 
+    //  ACTIONS
+    private void HandleDodgeInput()
+    {
+        if (dodgeInput)
+        {
+            dodgeInput = false;
+
+            //TODO: cant doge when a menu or ui windows is open
+            player.PlayerLocomotionManager.AttemptToPerformDodge();
+        }
+    }
 }
