@@ -7,14 +7,14 @@ public class PlayerInputManager : MonoBehaviour
     private PlayerManager player;
     private PlayerControls playerControls;
 
-    private readonly float walkingSpeedInputIndicator = 0.5f;
-    private readonly float runningSpeedInputIndicator = 1f;
+   public const float WALKING_INPUT_INDICATOR = 0.5f;
+   public const float RUNNING_INPUT_INDICATOR = 1f;
 
-    public enum InputSystem
-    {
-        KEYBOARD,
-        CONTROLLER
-    }
+    // public enum InputSystem
+    // {
+    //     KEYBOARD,
+    //     CONTROLLER
+    // }
 
     [Header("Camera Movement Input")]
     [SerializeField] private Vector2 cameraMovementInput;
@@ -22,7 +22,7 @@ public class PlayerInputManager : MonoBehaviour
     [SerializeField] private float cameraHorizontalInput;
 
     [Header("Player Movement Input")]
-    [SerializeField] private InputSystem inputSystem = InputSystem.KEYBOARD;
+    // [SerializeField] private InputSystem inputSystem = InputSystem.KEYBOARD;
     [SerializeField] private Vector2 playerMovementInput;
     [SerializeField] private float playerVerticalInput;
     [SerializeField] private float playerHorizontalInput;
@@ -30,14 +30,11 @@ public class PlayerInputManager : MonoBehaviour
 
     [Header("Player Action Input")]
     [SerializeField] private bool dodgeInput = false;
-
+    [SerializeField] private bool sprintInput = false;
     public static PlayerInputManager GetInstance
     {
         get { return instance; }
     }
-
-    public float WalkingSpeedInputIndicator => walkingSpeedInputIndicator;
-    public float RunningSpeedInputIndicator => runningSpeedInputIndicator;
     public float PlayerVerticalInput => playerVerticalInput;
     public float PlayerHorizontalInput => playerHorizontalInput;
     public float MoveAmount => moveAmount;
@@ -95,6 +92,8 @@ public class PlayerInputManager : MonoBehaviour
             playerControls.PlayerMovement.Movement.performed += i => playerMovementInput = i.ReadValue<Vector2>();
             playerControls.CameraMovement.Movement.performed += i => cameraMovementInput = i.ReadValue<Vector2>();
             playerControls.PlayerActions.Dodge.performed += i => dodgeInput = true;
+            playerControls.PlayerActions.Sprint.performed += i => sprintInput = true;
+            playerControls.PlayerActions.Sprint.canceled += i => sprintInput = false;
         }
 
         playerControls.Enable();
@@ -117,6 +116,7 @@ public class PlayerInputManager : MonoBehaviour
         HandeCameraMovementInput();
         HandlePlayerMovementInput();
         HandleDodgeInput();
+        HandleSprinting();
     }
 
     //  MOVEMENT
@@ -130,28 +130,30 @@ public class PlayerInputManager : MonoBehaviour
         //0 = still, 0.5 = walking, 1 = running
         moveAmount = Mathf.Clamp01(Mathf.Abs(playerVerticalInput) + Mathf.Abs(playerHorizontalInput));
 
-        if (inputSystem == InputSystem.KEYBOARD && moveAmount > 0)
-        {
-            moveAmount -= 0.5f;
-        }
-
-        if (moveAmount > 0 && playerControls.PlayerMovement.Running.IsPressed())
-        {
-            moveAmount = runningSpeedInputIndicator;
-        }
-        else if (moveAmount > 0)
-        {
-            moveAmount = walkingSpeedInputIndicator;
-        }
-
-        // if (moveAmount <= walkingSpeedInputIndicator && moveAmount > 0)
+        //====================================================================================================
+        // if (inputSystem == InputSystem.KEYBOARD && moveAmount > 0)
         // {
-        //     moveAmount = walkingSpeedInputIndicator;
+        //     moveAmount -= 0.5f;
         // }
-        // else if (moveAmount > walkingSpeedInputIndicator && moveAmount <= runningSpeedInputIndicator)
+        //====================================================================================================
+
+        // if (moveAmount > 0 && playerControls.PlayerMovement.Running.IsPressed())
         // {
         //     moveAmount = runningSpeedInputIndicator;
         // }
+        // else if (moveAmount > 0)
+        // {
+        //     moveAmount = walkingSpeedInputIndicator;
+        // }
+
+        if (moveAmount <= WALKING_INPUT_INDICATOR && moveAmount > 0)
+        {
+            moveAmount = WALKING_INPUT_INDICATOR;
+        }
+        else if (moveAmount > WALKING_INPUT_INDICATOR && moveAmount <= RUNNING_INPUT_INDICATOR)
+        {
+            moveAmount = RUNNING_INPUT_INDICATOR;
+        }
 
         if (player == null)
             return;
@@ -159,7 +161,7 @@ public class PlayerInputManager : MonoBehaviour
         //The reason we are apssing 0 to the horizontal movement
         //is because we want the player to move only where he is facing
         //when his camera is not locked on an object
-        player.PlayerAnimatorManager.UpdateAnimatorMovementParameters(0, moveAmount);
+        player.PlayerAnimatorManager.UpdateAnimatorMovementParameters(0, moveAmount, player.PlayerNetworkManager.IsSprinting);
 
         //TODO: if we are locked on:
     }
@@ -195,6 +197,18 @@ public class PlayerInputManager : MonoBehaviour
 
             //TODO: cant doge when a menu or ui windows is open
             player.PlayerLocomotionManager.AttemptToPerformDodge();
+        }
+    }
+
+    private void HandleSprinting()
+    {
+        if (sprintInput)
+        {
+            player.PlayerLocomotionManager.HandleSprinting();
+        }
+        else
+        {
+            player.PlayerNetworkManager.IsSprinting = false;
         }
     }
 }

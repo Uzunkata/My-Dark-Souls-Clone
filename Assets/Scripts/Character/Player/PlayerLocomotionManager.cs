@@ -13,10 +13,13 @@ public class PlayerLocomotionManager : CharacterLocomotionManager
     private Vector3 targetRotationDirection;
     [SerializeField] private float walkingSpeed = 2;
     [SerializeField] private float runningSpeed = 5;
+    [SerializeField] private float sprintingSpeed = 6.5f;
+    [SerializeField] private float sprintingStaminaCost = 2;
     [SerializeField] private float rotationSpeed = 15;
     
     [Header("Dodge")]
     private Vector3 rollDirection;
+    [SerializeField] private float dodgeStaminaCost = 25;
 
     protected override void Awake()
     {
@@ -41,7 +44,7 @@ public class PlayerLocomotionManager : CharacterLocomotionManager
             horizontalMovement = player.CharacterNetworkManager.VerticalMovement;
             moveAmount = player.CharacterNetworkManager.MoveAmount;
 
-            player.PlayerAnimatorManager.UpdateAnimatorMovementParameters(0, moveAmount);
+            player.PlayerAnimatorManager.UpdateAnimatorMovementParameters(0, moveAmount, player.PlayerNetworkManager.IsSprinting);
         }
     }
 
@@ -75,14 +78,22 @@ public class PlayerLocomotionManager : CharacterLocomotionManager
         //we don't want to move up and right.
         moveDirection.y = 0;
 
-        if (PlayerInputManager.GetInstance.MoveAmount > PlayerInputManager.GetInstance.WalkingSpeedInputIndicator)
+        if (player.PlayerNetworkManager.IsSprinting)
         {
-            player.Move(moveDirection * runningSpeed * Time.deltaTime);
-        } 
-        else if (PlayerInputManager.GetInstance.MoveAmount >= PlayerInputManager.GetInstance.WalkingSpeedInputIndicator)
-        {
-            player.Move(moveDirection * walkingSpeed * Time.deltaTime);
+            player.Move(sprintingSpeed * Time.deltaTime * moveDirection);
         }
+        else
+        { 
+            if (PlayerInputManager.GetInstance.MoveAmount > PlayerInputManager.WALKING_INPUT_INDICATOR)
+            {
+                player.Move(runningSpeed * Time.deltaTime * moveDirection);
+            } 
+            else if (PlayerInputManager.GetInstance.MoveAmount >= PlayerInputManager.RUNNING_INPUT_INDICATOR)
+            {
+                player.Move(walkingSpeed * Time.deltaTime * moveDirection);
+            }
+        }
+
         // if (PlayerInputManager.GetInstance.GetMovementSpeedType == PlayerInputManager.MovementSpeedType.RUNNING)
         // {
         //     player.Move(moveDirection * runningSpeed * Time.deltaTime);
@@ -119,6 +130,9 @@ public class PlayerLocomotionManager : CharacterLocomotionManager
         if (player.IsPerformingAction)
             return;
 
+        if (player.PlayerNetworkManager.currentStamina.Value <= 0)
+            return;
+
         //if we are moving, performe a roll
         if (moveAmount > 0)
         {
@@ -138,6 +152,37 @@ public class PlayerLocomotionManager : CharacterLocomotionManager
         else
         {
             player.PlayerAnimatorManager.PlayTargetActionAnimation("Back_Step_01", true);
+        }
+
+        player.PlayerNetworkManager.currentStamina.Value -= dodgeStaminaCost;
+    }
+
+    public void HandleSprinting()
+    {
+        if (player.IsPerformingAction)
+        {
+            player.PlayerNetworkManager.IsSprinting = false;
+        }
+
+        if (player.PlayerNetworkManager.currentStamina.Value <= 0)
+        {
+            player.PlayerNetworkManager.IsSprinting = false;
+            return;
+        }
+
+        //we can sprint only if we are moving
+        if (moveAmount > 0)
+        {
+            player.PlayerNetworkManager.IsSprinting = true;
+        }
+        else
+        {
+            player.PlayerNetworkManager.IsSprinting = false;
+        }
+
+        if (player.PlayerNetworkManager.IsSprinting)
+        {
+            player.PlayerNetworkManager.currentStamina.Value -= sprintingStaminaCost * Time.deltaTime;
         }
     }
 }

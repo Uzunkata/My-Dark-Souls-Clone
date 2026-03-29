@@ -14,9 +14,10 @@ public class ResetActionFlag : StateMachineBehaviour
             character = animator.GetComponent<CharacterManager>();
         }
 
-        character.IsPerformingAction = false;
-        character.ApplyRootMotion = false;
-        character.CanMove = true;
-        character.CanRotate = true;
+        character.EnterDefaultFlagState();
+        // character.IsPerformingAction = false;
+        // character.ApplyRootMotion = false;
+        // character.CanMove = true;
+        // character.CanRotate = true;
     }
 }

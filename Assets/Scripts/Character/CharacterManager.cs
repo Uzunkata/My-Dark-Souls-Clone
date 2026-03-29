@@ -8,7 +8,7 @@ public class CharacterManager : NetworkBehaviour
 {
     [HideInInspector] protected CharacterController characterController;
     [HideInInspector] protected Animator animator;
-    [HideInInspector] private CharacterNetworkManager characterNetworkManager;
+    [HideInInspector] protected CharacterNetworkManager characterNetworkManager;
 
     [Header("Flags")]
     [SerializeField] private bool isPerformingAction = false;
@@ -83,6 +83,14 @@ public class CharacterManager : NetworkBehaviour
         }
     }
 
+    public void EnterDefaultFlagState()
+    {
+        isPerformingAction = false;
+        applyRootMotion = false;
+        canMove = true;
+        canRotate = true;
+    }
+
     public void Move(Vector3 moveDirection)
     {
         characterController.Move(moveDirection);
@@ -92,5 +100,4 @@ public class CharacterManager : NetworkBehaviour
     {
         
     }
-
 }

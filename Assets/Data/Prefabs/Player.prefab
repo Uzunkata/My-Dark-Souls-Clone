@@ -517,13 +517,14 @@ GameObject:
   - component: {fileID: 2938768596408081581}
   - component: {fileID: -8653843582894635649}
   - component: {fileID: 1048682098828578286}
-  - component: {fileID: 267624608406991125}
   - component: {fileID: 5149024822317482865}
   - component: {fileID: -5924843574892727271}
   - component: {fileID: 3750351766985759804}
   - component: {fileID: -5857582790970015129}
   - component: {fileID: -4187482653634879696}
   - component: {fileID: 2597961510439727135}
+  - component: {fileID: 8367002310854401829}
+  - component: {fileID: 6292940035535573274}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -598,22 +599,6 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.9, z: 0}
---- !u!114 &267624608406991125
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2558971318863808023}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5cdb2f3487234344b423c2fdf89e04d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CharacterNetworkManager
-  ShowTopMostFoldoutHeaderGroup: 1
-  networkPositionVelocity: {x: 0, y: 0, z: 0}
-  networkPositionSmoothTime: 0.1
-  networkRotationSmoothTime: 0.1
 --- !u!114 &5149024822317482865
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -645,7 +630,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerLocomotionManager
   walkingSpeed: 2
   runningSpeed: 5
+  sprintingSpeed: 6.5
+  sprintingStaminaCost: 2
   rotationSpeed: 15
+  dodgeStaminaCost: 25
 --- !u!95 &3750351766985759804
 Animator:
   serializedVersion: 7
@@ -789,6 +777,51 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4c7720e9a1592c4ba3f9a2b6f607d19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSoundFXManager
+--- !u!114 &8367002310854401829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2558971318863808023}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 999a5472c9c15454f96a177e5cee0477, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerNetworkManager
+  ShowTopMostFoldoutHeaderGroup: 1
+  networkPositionVelocity: {x: 0, y: 0, z: 0}
+  networkPositionSmoothTime: 0.1
+  networkRotationSmoothTime: 0.1
+  endurance:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 10
+  currentStamina:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+  maxStamina:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+--- !u!114 &6292940035535573274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2558971318863808023}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e98c7c1c60f570d40bf2226e71808de2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStatsManager
+  staminaRegenerationDelay: 2
+  staminaRegenerationAmount: 2
 --- !u!1 &3055366267956622271
 GameObject:
   m_ObjectHideFlags: 0
