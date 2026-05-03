@@ -52,15 +52,16 @@ public class PlayerManager : CharacterManager
         {
             PlayerCamera.GetInstance.SetPlayer(this);
             PlayerInputManager.GetInstance.SetPlayer(this);
+            WorldSaveGameManager.GetInstance.SetPlayer(this);
 
-            playerNetworkManager.currentStamina.OnValueChanged += PlayerUIManager.GetInstance.PlayerUIHudManager.SetNewStaminaValue;
-            playerNetworkManager.currentStamina.OnValueChanged += playerStatsManager.ResetStaminaRegenTimer;
+            playerNetworkManager.CurrentStamina.OnValueChanged += PlayerUIManager.GetInstance.PlayerUIHudManager.SetNewStaminaValue;
+            playerNetworkManager.CurrentStamina.OnValueChanged += playerStatsManager.ResetStaminaRegenTimer;
 
             //TODO: this will be moved when saving and loading is added
-            playerNetworkManager.maxStamina.Value = PlayerStatsManager.CalculateStaminaBasedOnEnduranceLevel(playerNetworkManager.Endurance);
-            playerNetworkManager.currentStamina.Value = PlayerStatsManager.CalculateStaminaBasedOnEnduranceLevel(playerNetworkManager.Endurance);
-
-            PlayerUIManager.GetInstance.PlayerUIHudManager.SetMaxStaminaValue(playerNetworkManager.maxStamina.Value);
+            float stamina = CharacterStatsManager.CalculateStaminaBasedOnEnduranceLevel(playerNetworkManager.Endurance);
+            playerNetworkManager.MaxStamina.Value = stamina;
+            playerNetworkManager.CurrentStamina.Value = stamina;
+            PlayerUIManager.GetInstance.PlayerUIHudManager.SetMaxStaminaValue(stamina);
         }
     }
 
@@ -72,5 +73,30 @@ public class PlayerManager : CharacterManager
         base.LateUpdate();
 
         PlayerCamera.GetInstance.HandleAllCameraActions();
+    }
+
+    public CharacterSaveData GetCharacterSaveData()
+    {
+        CharacterSaveData characterSaveData = new CharacterSaveData()
+        {
+            CharacterName = "GOSU",
+
+            XPosition = transform.position.x,
+            YPosition = transform.position.y,
+            ZPosition = transform.position.z,
+
+            CurrentStamina = playerNetworkManager.CurrentStamina.Value,
+        };
+
+        return characterSaveData;
+    }
+
+    public void LoadCharacterSaveData(CharacterSaveData characterSaveData)
+    {
+        playerNetworkManager.CharacterName = characterSaveData.CharacterName;
+        Vector3 playerPosition = new(characterSaveData.XPosition, characterSaveData.YPosition, characterSaveData.ZPosition);
+        transform.position = playerPosition;
+
+        playerNetworkManager.CurrentStamina.Value = characterSaveData.CurrentStamina;
     }
 }

@@ -8,6 +8,7 @@ public class CharacterStatsManager : MonoBehaviour
     [Header("StaminaRegeneration")]
     private float staminaRegenerationTimer = 0;
     private float staminaTickTimer = 0;
+    [SerializeField] private float staminaTickDelay = 0.1f;
     [SerializeField] private float staminaRegenerationDelay = 2;
     [SerializeField] private float staminaRegenerationAmount = 2;
 
@@ -20,7 +21,7 @@ public class CharacterStatsManager : MonoBehaviour
     {
         float stamina = 0;
 
-        // create an equation for stamina calculation
+        //TODO: create an equation for stamina calculation
         stamina = endurance * 10;
 
         return Mathf.RoundToInt(stamina);
@@ -28,11 +29,11 @@ public class CharacterStatsManager : MonoBehaviour
 
     public virtual void RegenerateStamina()
     {
-        //we want only owenrs to edit their network variables
+        //we want only owenrs to edit their respective network variables
         if (!character.IsOwner)
             return;
 
-        //we dont want to renerate stamina while sprinting
+        //we don't want to regenerate stamina while sprinting
         if (character.CharacterNetworkManager.IsSprinting)
             return;
 
@@ -43,14 +44,13 @@ public class CharacterStatsManager : MonoBehaviour
 
         if (staminaRegenerationTimer >= staminaRegenerationDelay)
         {
-            if (character.CharacterNetworkManager.currentStamina.Value < character.CharacterNetworkManager.maxStamina.Value)
+            if (character.CharacterNetworkManager.CurrentStamina.Value < character.CharacterNetworkManager.MaxStamina.Value)
             {
                 staminaTickTimer += Time.deltaTime;
-
-                if (staminaTickTimer >= 0.1)
+                if (staminaTickTimer >= staminaTickDelay)
                 {
                     staminaTickTimer = 0;
-                    character.CharacterNetworkManager.currentStamina.Value += staminaRegenerationAmount;
+                    character.CharacterNetworkManager.CurrentStamina.Value += staminaRegenerationAmount;
                 }
             }
         }

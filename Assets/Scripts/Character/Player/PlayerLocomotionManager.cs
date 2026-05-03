@@ -130,7 +130,7 @@ public class PlayerLocomotionManager : CharacterLocomotionManager
         if (player.IsPerformingAction)
             return;
 
-        if (player.PlayerNetworkManager.currentStamina.Value <= 0)
+        if (player.PlayerNetworkManager.CurrentStamina.Value <= 0)
             return;
 
         //if we are moving, performe a roll
@@ -154,7 +154,7 @@ public class PlayerLocomotionManager : CharacterLocomotionManager
             player.PlayerAnimatorManager.PlayTargetActionAnimation("Back_Step_01", true);
         }
 
-        player.PlayerNetworkManager.currentStamina.Value -= dodgeStaminaCost;
+        player.PlayerNetworkManager.CurrentStamina.Value -= dodgeStaminaCost;
     }
 
     public void HandleSprinting()
@@ -164,7 +164,7 @@ public class PlayerLocomotionManager : CharacterLocomotionManager
             player.PlayerNetworkManager.IsSprinting = false;
         }
 
-        if (player.PlayerNetworkManager.currentStamina.Value <= 0)
+        if (player.PlayerNetworkManager.CurrentStamina.Value <= 0)
         {
             player.PlayerNetworkManager.IsSprinting = false;
             return;
@@ -182,7 +182,7 @@ public class PlayerLocomotionManager : CharacterLocomotionManager
 
         if (player.PlayerNetworkManager.IsSprinting)
         {
-            player.PlayerNetworkManager.currentStamina.Value -= sprintingStaminaCost * Time.deltaTime;
+            player.PlayerNetworkManager.CurrentStamina.Value -= sprintingStaminaCost * Time.deltaTime;
         }
     }
 }

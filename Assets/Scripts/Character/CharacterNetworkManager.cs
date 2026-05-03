@@ -1,5 +1,6 @@
 using UnityEngine;
 using Unity.Netcode;
+using System;
 
 [RequireComponent(typeof(CharacterManager))]
 public class CharacterNetworkManager : NetworkBehaviour
@@ -29,8 +30,8 @@ public class CharacterNetworkManager : NetworkBehaviour
 
     [Header("Stats")]
     [SerializeField] protected NetworkVariable<int> endurance = new(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-    public NetworkVariable<float> currentStamina = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-    public NetworkVariable<float> maxStamina = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    protected NetworkVariable<float> currentStamina = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    protected NetworkVariable<float> maxStamina = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
     public Vector3 NetworkPosition
     {
@@ -67,15 +68,13 @@ public class CharacterNetworkManager : NetworkBehaviour
         get => endurance.Value;
         set => endurance.Value = value;
     }
-    
-    public NetworkVariable<float> GetCurrentStamina()
+    public NetworkVariable<float> CurrentStamina
     {
-        return currentStamina;
+        get => currentStamina;
     }
-
-    public NetworkVariable<float> GetMaxStamina()
+    public NetworkVariable<float> MaxStamina
     {
-        return maxStamina;
+        get => maxStamina;
     }
 
     protected virtual void Awake() 
