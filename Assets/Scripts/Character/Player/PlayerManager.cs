@@ -1,5 +1,8 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Unity.Collections;
+using System.Collections;
+using System;
 
 [RequireComponent(typeof(PlayerLocomotionManager))]
 [RequireComponent(typeof(PlayerAnimatorManager))]
@@ -7,15 +10,26 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(PlayerStatsManager))]
 public class PlayerManager : CharacterManager
 {
-    [HideInInspector] private PlayerLocomotionManager playerLocomotionManager;
-    [HideInInspector] private PlayerAnimatorManager playerAnimatorManager;
-    [HideInInspector] private PlayerNetworkManager playerNetworkManager;
-    [HideInInspector] private PlayerStatsManager playerStatsManager;
+    private PlayerLocomotionManager playerLocomotionManager;
+    private PlayerAnimatorManager playerAnimatorManager;
+    private PlayerNetworkManager playerNetworkManager;
+    private PlayerStatsManager playerStatsManager;
+
+    [SerializeField] private bool respawnPlayer = false;
 
     public PlayerLocomotionManager PlayerLocomotionManager => playerLocomotionManager;
     public PlayerAnimatorManager PlayerAnimatorManager => playerAnimatorManager;
     public PlayerNetworkManager PlayerNetworkManager => playerNetworkManager;
     public PlayerStatsManager PlayerStatsManager => playerStatsManager;
+
+    #region CharacterNetworkManager Variables
+    public FixedString64Bytes CharacterName
+    {
+        get => playerNetworkManager.CharacterName;
+        set => playerNetworkManager.CharacterName = value;
+    }
+
+    #endregion
 
     protected override void Awake()
     {
@@ -41,6 +55,7 @@ public class PlayerManager : CharacterManager
         {
             playerLocomotionManager.HandleAllMovement();
             playerStatsManager.RegenerateStamina();
+            DebugMenu();
         }
     }
 
@@ -54,15 +69,17 @@ public class PlayerManager : CharacterManager
             PlayerInputManager.GetInstance.SetPlayer(this);
             WorldSaveGameManager.GetInstance.SetPlayer(this);
 
-            playerNetworkManager.CurrentStamina.OnValueChanged += PlayerUIManager.GetInstance.PlayerUIHudManager.SetNewStaminaValue;
-            playerNetworkManager.CurrentStamina.OnValueChanged += playerStatsManager.ResetStaminaRegenTimer;
+            // UPDATE THE MAX BAR AMOUNT WHEN THE CORESPONDING STAT CHANGES
+            Vitality.OnValueChanged += SetNewMaxHealthValue;
+            Endurance.OnValueChanged += SetNewMaxStaminaValue;
 
-            //TODO: this will be moved when saving and loading is added
-            float stamina = CharacterStatsManager.CalculateStaminaBasedOnEnduranceLevel(playerNetworkManager.Endurance);
-            playerNetworkManager.MaxStamina.Value = stamina;
-            playerNetworkManager.CurrentStamina.Value = stamina;
-            PlayerUIManager.GetInstance.PlayerUIHudManager.SetMaxStaminaValue(stamina);
+            // UPDATES UI STAT BARS WHEN A STAT CHANGES
+            CurrentHealth.OnValueChanged += PlayerUIManager.GetInstance.PlayerUIHudManager.SetNewHealthValue;
+            CurrentStamina.OnValueChanged += PlayerUIManager.GetInstance.PlayerUIHudManager.SetNewStaminaValue;
+            CurrentStamina.OnValueChanged += playerStatsManager.ResetStaminaRegenTimer;
         }
+
+        CurrentHealth.OnValueChanged += playerNetworkManager.CheckHP;
     }
 
     protected override void LateUpdate()
@@ -75,17 +92,34 @@ public class PlayerManager : CharacterManager
         PlayerCamera.GetInstance.HandleAllCameraActions();
     }
 
+    public override IEnumerator ProcessDeathEvent(bool manuallySelectDeathAnimation = false)
+    { 
+        if (IsOwner)
+        {
+            PlayerUIManager.GetInstance.PlayerUIPopUpManager.SendYouDiedPopUp();
+        }
+
+        // TODO: CHECK FOR ALLY PLAYERS DEATH, IF ALL ARE DEAD RESPAWN ALL
+
+        return base.ProcessDeathEvent(manuallySelectDeathAnimation);
+
+    }
     public CharacterSaveData GetCharacterSaveData()
     {
         CharacterSaveData characterSaveData = new CharacterSaveData()
         {
+            //TODO: character name
             CharacterName = "GOSU",
 
             XPosition = transform.position.x,
             YPosition = transform.position.y,
             ZPosition = transform.position.z,
 
-            CurrentStamina = playerNetworkManager.CurrentStamina.Value,
+            Vitality = Vitality.Value,
+            Endurance = Endurance.Value,
+
+            CurrentHealth = CurrentHealth.Value,
+            CurrentStamina = CurrentStamina.Value,
         };
 
         return characterSaveData;
@@ -93,10 +127,60 @@ public class PlayerManager : CharacterManager
 
     public void LoadCharacterSaveData(CharacterSaveData characterSaveData)
     {
-        playerNetworkManager.CharacterName = characterSaveData.CharacterName;
+        CharacterName = characterSaveData.CharacterName;
         Vector3 playerPosition = new(characterSaveData.XPosition, characterSaveData.YPosition, characterSaveData.ZPosition);
         transform.position = playerPosition;
 
-        playerNetworkManager.CurrentStamina.Value = characterSaveData.CurrentStamina;
+        Vitality.Value = characterSaveData.Vitality;
+        Endurance.Value = characterSaveData.Endurance;
+
+        int health = CharacterStatsManager.CalculateHealthBasedOnVitalityLevel(characterSaveData.Vitality);
+        MaxHealth.Value = health;
+        PlayerUIManager.GetInstance.PlayerUIHudManager.SetMaxHealthValue(health);
+        CurrentHealth.Value = characterSaveData.CurrentHealth;
+
+        int stamina = CharacterStatsManager.CalculateStaminaBasedOnEnduranceLevel(characterSaveData.Endurance);
+        MaxStamina.Value = stamina;
+        PlayerUIManager.GetInstance.PlayerUIHudManager.SetMaxStaminaValue(stamina);
+        CurrentStamina.Value = characterSaveData.CurrentStamina;
+    }
+
+    public void SetNewMaxHealthValue(int oldValue, int newValue)
+    {
+        MaxHealth.Value = CharacterStatsManager.CalculateHealthBasedOnVitalityLevel(newValue);
+        PlayerUIManager.GetInstance.PlayerUIHudManager.SetMaxHealthValue(MaxHealth.Value);
+        CurrentHealth.Value = MaxHealth.Value;
+    }
+
+    public void SetNewMaxStaminaValue(int oldValue, int newValue)
+    {
+        MaxStamina.Value = CharacterStatsManager.CalculateStaminaBasedOnEnduranceLevel(newValue);
+        PlayerUIManager.GetInstance.PlayerUIHudManager.SetMaxStaminaValue(MaxStamina.Value);
+        CurrentStamina.Value = MaxStamina.Value;
+    }
+
+    // DELETE LATER
+    private void DebugMenu()
+    {
+        if (respawnPlayer)
+        {
+            respawnPlayer = false;
+            ReviveCharacter();
+        }
+    }
+
+    public override void ReviveCharacter()
+    {
+        base.ReviveCharacter();
+
+        if (IsOwner)
+        {
+            CurrentHealth.Value = MaxHealth.Value;
+            CurrentStamina.Value = MaxStamina.Value;
+            // TODO: 
+            // RESET FOCUS
+            // PLAY REBIRTH ANIMATION
+            playerAnimatorManager.PlayTargetActionAnimation("Empty", false);
+        }
     }
 }

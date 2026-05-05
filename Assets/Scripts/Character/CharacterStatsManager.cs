@@ -17,12 +17,26 @@ public class CharacterStatsManager : MonoBehaviour
         character = GetComponent<CharacterManager>();
     }
 
+    protected virtual void Start()
+    {
+        
+    }
+    public static int CalculateHealthBasedOnVitalityLevel(int vitality)
+    {
+        float health = 0;
+
+        //TODO: create an equation for health calculation
+        health = vitality * 12;
+
+        return Mathf.RoundToInt(health);
+    }
+
     public static int CalculateStaminaBasedOnEnduranceLevel(int endurance)
     {
         float stamina = 0;
 
         //TODO: create an equation for stamina calculation
-        stamina = endurance * 10;
+        stamina = endurance * 8;
 
         return Mathf.RoundToInt(stamina);
     }
@@ -34,7 +48,7 @@ public class CharacterStatsManager : MonoBehaviour
             return;
 
         //we don't want to regenerate stamina while sprinting
-        if (character.CharacterNetworkManager.IsSprinting)
+        if (character.IsSprinting)
             return;
 
         if (character.IsPerformingAction)
@@ -44,13 +58,13 @@ public class CharacterStatsManager : MonoBehaviour
 
         if (staminaRegenerationTimer >= staminaRegenerationDelay)
         {
-            if (character.CharacterNetworkManager.CurrentStamina.Value < character.CharacterNetworkManager.MaxStamina.Value)
+            if (character.CurrentStamina.Value < character.MaxStamina.Value)
             {
                 staminaTickTimer += Time.deltaTime;
                 if (staminaTickTimer >= staminaTickDelay)
                 {
                     staminaTickTimer = 0;
-                    character.CharacterNetworkManager.CurrentStamina.Value += staminaRegenerationAmount;
+                    character.CurrentStamina.Value += staminaRegenerationAmount;
                 }
             }
         }

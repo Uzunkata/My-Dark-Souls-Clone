@@ -161,7 +161,7 @@ public class PlayerInputManager : MonoBehaviour
         //The reason we are apssing 0 to the horizontal movement
         //is because we want the player to move only where he is facing
         //when his camera is not locked on an object
-        player.PlayerAnimatorManager.UpdateAnimatorMovementParameters(0, moveAmount, player.PlayerNetworkManager.IsSprinting);
+        player.PlayerAnimatorManager.UpdateAnimatorMovementParameters(0, moveAmount, player.IsSprinting);
 
         //TODO: if we are locked on:
     }
@@ -208,7 +208,7 @@ public class PlayerInputManager : MonoBehaviour
         }
         else
         {
-            player.PlayerNetworkManager.IsSprinting = false;
+            player.IsSprinting = false;
         }
     }
 }

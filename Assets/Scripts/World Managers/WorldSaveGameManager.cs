@@ -124,7 +124,7 @@ public class WorldSaveGameManager : MonoBehaviour
 
     public void LoadCharacterSave(int slotIndex)
     {
-        validateSaveSlotIndex(slotIndex);
+        ValidateSaveSlotIndex(slotIndex);
 
         currentSlotIndex = slotIndex;
         LoadGame();
@@ -138,28 +138,41 @@ public class WorldSaveGameManager : MonoBehaviour
             return;
         }
 
-        int emptySlot = -1;
         for (int i = 0; i < MAX_CHARACTER_SAVES; i++)
         {
             if (characterSaves[i] == null)
             {
-                emptySlot = i;
-                break;
+                currentSlotIndex = i;
+                CreateNewCharacterSave();
+                // characterSaves[currentSlotIndex] = new CharacterSaveData();
+                // characterSavesCount++;
+                // SaveGame();
+                LoadGame();
+                return;
             }
         }
 
-        currentSlotIndex = emptySlot;
-        characterSaves[currentSlotIndex] = new CharacterSaveData();
+        throw new Exception("Error while try to create new game");
+    }
+
+    private void CreateNewCharacterSave()
+    {
+        //TODO: load and set stats based on selected class
+        player.Vitality.Value = 15;
+        player.Vitality.Value = 10;
+        player.CurrentHealth.Value = CharacterStatsManager.CalculateHealthBasedOnVitalityLevel(player.Vitality.Value);
+        player.CurrentStamina.Value = CharacterStatsManager.CalculateStaminaBasedOnEnduranceLevel(player.Endurance.Value);
+
         characterSavesCount++;
+        characterSaves[currentSlotIndex] = new CharacterSaveData();
         SaveGame();
-        StartCoroutine(LoadWorldScene());
     }
 
     public string GetFileName(int index)
     {
         try
         {
-            validateSaveSlotIndex(index);
+            ValidateSaveSlotIndex(index);
         } catch(Exception)
         {
             return null;
@@ -169,16 +182,16 @@ public class WorldSaveGameManager : MonoBehaviour
 
     }
 
-    private void validateSaveSlotIndex(int saveSlotIndex)
+    private void ValidateSaveSlotIndex(int saveSlotIndex)
     {
         if (saveSlotIndex < 0 || saveSlotIndex >= MAX_CHARACTER_SAVES)
         {
             throw new Exception("WorldSaveGameManager::DeleteGame(...) -> invalid characterSlotIndex given");
         }
     }
-    private CharacterSaveFile getSaveFileBasedOnIndex(int saveSlotIndex)
+    private CharacterSaveFile GetSaveFileBasedOnIndex(int saveSlotIndex)
     {
-        validateSaveSlotIndex(saveSlotIndex);
+        ValidateSaveSlotIndex(saveSlotIndex);
 
         return new()
         {
@@ -186,29 +199,29 @@ public class WorldSaveGameManager : MonoBehaviour
             FileName = GetFileName(saveSlotIndex)
         };
     }
+
     public void LoadGame()
     {
-        CharacterSaveFile saveFileDataWriter = getSaveFileBasedOnIndex(currentSlotIndex);
+        CharacterSaveFile saveFileDataWriter = GetSaveFileBasedOnIndex(currentSlotIndex);
         characterSaves[currentSlotIndex] = saveFileDataWriter.LoadCharacterSaveFile();
         player.LoadCharacterSaveData(characterSaves[currentSlotIndex]);
-
         StartCoroutine(LoadWorldScene());
     }
 
     public void SaveGame()
     {
-        CharacterSaveFile saveFileDataWriter = getSaveFileBasedOnIndex(currentSlotIndex);
+        CharacterSaveFile saveFileDataWriter = GetSaveFileBasedOnIndex(currentSlotIndex);
         characterSaves[currentSlotIndex] = player.GetCharacterSaveData();
         saveFileDataWriter.CreateCharacterSaveFile(characterSaves[currentSlotIndex]);
     }
 
     public void DeleteGame(int characterSlotIndex)
     {
-        validateSaveSlotIndex(characterSlotIndex);
+        ValidateSaveSlotIndex(characterSlotIndex);
 
         characterSaves[characterSlotIndex] = null;
 
-        CharacterSaveFile saveFileDataWriter = getSaveFileBasedOnIndex(characterSlotIndex);
+        CharacterSaveFile saveFileDataWriter = GetSaveFileBasedOnIndex(characterSlotIndex);
         saveFileDataWriter.DeleteCharacterSaveFile();
     }
     public IEnumerator LoadWorldScene()

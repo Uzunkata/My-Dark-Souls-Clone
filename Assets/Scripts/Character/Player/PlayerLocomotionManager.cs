@@ -44,7 +44,7 @@ public class PlayerLocomotionManager : CharacterLocomotionManager
             horizontalMovement = player.CharacterNetworkManager.VerticalMovement;
             moveAmount = player.CharacterNetworkManager.MoveAmount;
 
-            player.PlayerAnimatorManager.UpdateAnimatorMovementParameters(0, moveAmount, player.PlayerNetworkManager.IsSprinting);
+            player.PlayerAnimatorManager.UpdateAnimatorMovementParameters(0, moveAmount, player.IsSprinting);
         }
     }
 
@@ -130,7 +130,7 @@ public class PlayerLocomotionManager : CharacterLocomotionManager
         if (player.IsPerformingAction)
             return;
 
-        if (player.PlayerNetworkManager.CurrentStamina.Value <= 0)
+        if (player.CurrentStamina.Value <= 0)
             return;
 
         //if we are moving, performe a roll
@@ -154,35 +154,35 @@ public class PlayerLocomotionManager : CharacterLocomotionManager
             player.PlayerAnimatorManager.PlayTargetActionAnimation("Back_Step_01", true);
         }
 
-        player.PlayerNetworkManager.CurrentStamina.Value -= dodgeStaminaCost;
+        player.CurrentStamina.Value -= dodgeStaminaCost;
     }
 
     public void HandleSprinting()
     {
         if (player.IsPerformingAction)
         {
-            player.PlayerNetworkManager.IsSprinting = false;
+            player.IsSprinting = false;
         }
 
-        if (player.PlayerNetworkManager.CurrentStamina.Value <= 0)
+        if (player.CurrentStamina.Value <= 0)
         {
-            player.PlayerNetworkManager.IsSprinting = false;
+            player.IsSprinting = false;
             return;
         }
 
         //we can sprint only if we are moving
         if (moveAmount > 0)
         {
-            player.PlayerNetworkManager.IsSprinting = true;
+            player.IsSprinting = true;
         }
         else
         {
-            player.PlayerNetworkManager.IsSprinting = false;
+            player.IsSprinting = false;
         }
 
-        if (player.PlayerNetworkManager.IsSprinting)
+        if (player.IsSprinting)
         {
-            player.PlayerNetworkManager.CurrentStamina.Value -= sprintingStaminaCost * Time.deltaTime;
+            player.CurrentStamina.Value -= sprintingStaminaCost * Time.deltaTime;
         }
     }
 }

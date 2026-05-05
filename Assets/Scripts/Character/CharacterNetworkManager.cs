@@ -5,13 +5,16 @@ using System;
 [RequireComponent(typeof(CharacterManager))]
 public class CharacterNetworkManager : NetworkBehaviour
 {
-    CharacterManager character;
+    private CharacterManager character;
 
     public Vector3 networkPositionVelocity;
     [SerializeField]
     protected float networkPositionSmoothTime = 0.1f;
     [SerializeField]
     protected float networkRotationSmoothTime = 0.1f;
+
+    [Header("Status")]
+    protected NetworkVariable<bool> isDead = new (false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
     [Header("Position")]
     protected NetworkVariable<Vector3> networkPosition = new (Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
@@ -29,10 +32,16 @@ public class CharacterNetworkManager : NetworkBehaviour
     protected NetworkVariable<bool> isSprinting = new(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
     [Header("Stats")]
+    [SerializeField] protected NetworkVariable<int> vitality = new(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     [SerializeField] protected NetworkVariable<int> endurance = new(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-    protected NetworkVariable<float> currentStamina = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-    protected NetworkVariable<float> maxStamina = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
+    [Header("Resources")]
+    [SerializeField] protected NetworkVariable<int> currentHealth = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    [SerializeField] protected NetworkVariable<int> maxHealth = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    [SerializeField] protected NetworkVariable<float> currentStamina = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    [SerializeField] protected NetworkVariable<int> maxStamina = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
+    #region VARIABLES GETTERS AND SETTERS
     public Vector3 NetworkPosition
     {
         get => networkPosition.Value;
@@ -63,23 +72,55 @@ public class CharacterNetworkManager : NetworkBehaviour
         set => isSprinting.Value = value;
         get => isSprinting.Value;
     }
-    public int Endurance
+
+    public NetworkVariable<bool> IsDead
     {
-        get => endurance.Value;
-        set => endurance.Value = value;
+        get => isDead;
+    }
+
+    public NetworkVariable<int> Vitality
+    {
+        get => vitality;
+    }
+    public NetworkVariable<int> CurrentHealth => currentHealth;
+    
+    public NetworkVariable<int> MaxHealth
+    {
+        get => maxHealth;
+    }
+    public NetworkVariable<int> Endurance
+    {
+        get => endurance;
     }
     public NetworkVariable<float> CurrentStamina
     {
         get => currentStamina;
     }
-    public NetworkVariable<float> MaxStamina
+    public NetworkVariable<int> MaxStamina
     {
         get => maxStamina;
     }
 
+    #endregion
+
     protected virtual void Awake() 
     {
         character = GetComponent<CharacterManager>();
+    }
+
+    public void CheckHP(int oldValue, int newValue)
+    {
+        if (currentHealth.Value <= 0)
+        {
+            StartCoroutine(character.ProcessDeathEvent());
+        }
+
+        // To prevent overhealing
+        if (character.IsOwner)
+        {
+            if (currentHealth.Value > maxHealth.Value)
+                currentHealth.Value = maxHealth.Value;
+        }
     }
 
     //a server RPC is a funciton called from a client, but executed on the server(the host).

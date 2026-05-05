@@ -9,11 +9,14 @@ public class PlayerUIManager : MonoBehaviour
         get { return instance; }
     }
 
-    [HideInInspector] private PlayerUIHudManager playerUIHudManager;
+    private PlayerUIHudManager playerUIHudManager;
+    private PlayerUIPopUpManager playerUIPopUpManager;
 
     public PlayerUIHudManager PlayerUIHudManager => playerUIHudManager;
+    public PlayerUIPopUpManager PlayerUIPopUpManager => playerUIPopUpManager;
+
     
-        //for DEBUGGING
+    // for DEBUGGING
     [Header("NETWORK JOIN")]
     [SerializeField]
     private bool startGameAsClient;
@@ -30,6 +33,7 @@ public class PlayerUIManager : MonoBehaviour
         }
 
         playerUIHudManager = GetComponentInChildren<PlayerUIHudManager>();
+        playerUIPopUpManager = GetComponentInChildren<PlayerUIPopUpManager>();
     }
 
     private void Start()

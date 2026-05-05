@@ -1,23 +1,88 @@
 using UnityEngine;
 using Unity.Netcode;
+using System.Collections;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(CharacterNetworkManager))]
 [RequireComponent(typeof(Animator))]
+
+[RequireComponent(typeof(CharacterEffectsManager))]
+[RequireComponent(typeof(CharacterAnimatorManager))]
 public class CharacterManager : NetworkBehaviour
 {
     [HideInInspector] protected CharacterController characterController;
     [HideInInspector] protected Animator animator;
     [HideInInspector] protected CharacterNetworkManager characterNetworkManager;
+    [HideInInspector] protected CharacterEffectsManager characterEffectsManager;
+    [HideInInspector] protected CharacterAnimatorManager characterAnimatorManager;
 
     [Header("Flags")]
-    [SerializeField] private bool isPerformingAction = false;
-    [SerializeField] private bool applyRootMotion = false;
-    [SerializeField] private bool canRotate = true;
-    [SerializeField] private bool canMove = true;
+    [SerializeField] protected bool isPerformingAction = false;
+    [SerializeField] protected bool applyRootMotion = false;
+    [SerializeField] protected bool canRotate = true;
+    [SerializeField] protected bool canMove = true;
 
     public Animator Animator => animator;
     public CharacterNetworkManager CharacterNetworkManager => characterNetworkManager;
+    public CharacterEffectsManager CharacterEffectsManager => characterEffectsManager;
+
+    #region CharacterNetworkManager Variables
+
+    // public Vector3 NetworkPosition
+    // {
+    //     get => networkPosition.Value;
+    //     set => networkPosition.Value = value;
+    // }
+    // public Quaternion NetworkRotation
+    // {
+    //     get => networkRotation.Value;
+    //     set => networkRotation.Value = value;
+    // }
+    // public float VerticalMovement
+    // {
+    //     get => verticalMovement.Value;
+    //     set => verticalMovement.Value = value;
+    // }
+    // public float HorizontalMovement
+    // {
+    //     get => horizontalMovement.Value;
+    //     set => horizontalMovement.Value = value;
+    // }
+    // public float MoveAmount
+    // {
+    //     get => moveAmount.Value;
+    //     set => moveAmount.Value = value;
+    // }
+    public bool IsSprinting
+    {
+        set => characterNetworkManager.IsSprinting = value;
+        get => characterNetworkManager.IsSprinting;
+    }
+
+    public NetworkVariable<bool> IsDead
+    {
+        get => characterNetworkManager.IsDead;
+    }
+    public NetworkVariable<int> Vitality
+    {
+        get => characterNetworkManager.Vitality;
+    }
+    public NetworkVariable<int> CurrentHealth => characterNetworkManager.CurrentHealth;
+    public NetworkVariable<int> MaxHealth => characterNetworkManager.MaxHealth;
+    public NetworkVariable<int> Endurance
+    {
+        get => characterNetworkManager.Endurance;
+    }
+    public NetworkVariable<float> CurrentStamina
+    {
+        get => characterNetworkManager.CurrentStamina;
+    }
+    public NetworkVariable<int> MaxStamina
+    {
+        get => characterNetworkManager.MaxStamina;
+    }
+    
+    #endregion
 
     public bool IsPerformingAction
     {
@@ -51,6 +116,8 @@ public class CharacterManager : NetworkBehaviour
         characterController = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
         characterNetworkManager = GetComponent<CharacterNetworkManager>();
+        characterEffectsManager = GetComponent<CharacterEffectsManager>();
+        characterAnimatorManager = GetComponent<CharacterAnimatorManager>();
     }
 
     protected virtual void Update() 
@@ -97,6 +164,37 @@ public class CharacterManager : NetworkBehaviour
     }
 
     protected virtual void LateUpdate()
+    {
+        
+    }
+
+    public virtual IEnumerator ProcessDeathEvent(bool manuallySelectDeathAnimation = false)
+    {
+        if (IsOwner)
+        {
+            CurrentHealth.Value = 0;
+            IsDead.Value = true;
+        }
+
+        // TODO:
+        // MANAGE FLAGS
+        // IF WE ARE NOT GROUNDED, PLAY A AERIAL DEATH ANIMATION
+
+        if (!manuallySelectDeathAnimation)
+        {
+            characterAnimatorManager.PlayTargetActionAnimation("Death_01", true);
+        }
+
+        // TODO:
+        // SOUND FX
+
+        yield return new WaitForSeconds(5);
+
+        // AWARD PVP PLAYERS WITH RINES
+        // DISABLE CHARACTER
+    }
+
+    public virtual void ReviveCharacter()
     {
         
     }

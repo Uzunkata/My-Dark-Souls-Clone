@@ -15,9 +15,15 @@ public class CharacterSaveData
     [SerializeField] private float yPosition;
     [SerializeField] private float zPosition;
 
-    [Header("Statuses")]
+    [Header("Stats")]
+    [SerializeField] private int vitality;
+    [SerializeField] private int endurance;
+
+    [Header("Resources")]
+    [SerializeField] private int currentHealth;
     [SerializeField] private float currentStamina;
 
+    #region VARIABLES GETTERS AND SETTERS
     public string CharacterName 
     { 
         get => characterName; 
@@ -43,10 +49,26 @@ public class CharacterSaveData
         get => zPosition; 
         set => zPosition = value; 
     }
-
+    public int Vitality
+    {
+        get => vitality;
+        set => vitality = value;
+    }
+    public int Endurance
+    {
+        get => endurance;
+        set => endurance = value;
+    }
+    public int CurrentHealth    
+    { 
+        get => currentHealth; 
+        set => currentHealth = value; 
+    }
     public float CurrentStamina    
     { 
         get => currentStamina; 
         set => currentStamina = value; 
     }
+
+    #endregion
 }
