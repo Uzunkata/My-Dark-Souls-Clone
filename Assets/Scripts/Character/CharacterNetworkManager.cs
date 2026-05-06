@@ -73,33 +73,15 @@ public class CharacterNetworkManager : NetworkBehaviour
         get => isSprinting.Value;
     }
 
-    public NetworkVariable<bool> IsDead
-    {
-        get => isDead;
-    }
+    public NetworkVariable<bool> IsDead => isDead;
 
-    public NetworkVariable<int> Vitality
-    {
-        get => vitality;
-    }
+    public NetworkVariable<int> Vitality => vitality;
     public NetworkVariable<int> CurrentHealth => currentHealth;
     
-    public NetworkVariable<int> MaxHealth
-    {
-        get => maxHealth;
-    }
-    public NetworkVariable<int> Endurance
-    {
-        get => endurance;
-    }
-    public NetworkVariable<float> CurrentStamina
-    {
-        get => currentStamina;
-    }
-    public NetworkVariable<int> MaxStamina
-    {
-        get => maxStamina;
-    }
+    public NetworkVariable<int> MaxHealth => maxHealth;
+    public NetworkVariable<int> Endurance => endurance;
+    public NetworkVariable<float> CurrentStamina => currentStamina;
+    public NetworkVariable<int> MaxStamina => maxStamina;
 
     #endregion
 

@@ -3,24 +3,35 @@ using UnityEngine.SceneManagement;
 using Unity.Collections;
 using System.Collections;
 using System;
-
 [RequireComponent(typeof(PlayerLocomotionManager))]
 [RequireComponent(typeof(PlayerAnimatorManager))]
 [RequireComponent(typeof(PlayerNetworkManager))]
 [RequireComponent(typeof(PlayerStatsManager))]
+
+[RequireComponent(typeof(PlayerInventoryManager))]
+[RequireComponent(typeof(PlayerEquipmentManager))]
 public class PlayerManager : CharacterManager
 {
     private PlayerLocomotionManager playerLocomotionManager;
     private PlayerAnimatorManager playerAnimatorManager;
     private PlayerNetworkManager playerNetworkManager;
     private PlayerStatsManager playerStatsManager;
+    private PlayerInventoryManager playerInventoryManager;
+    private PlayerEquipmentManager playerEquipmentManager;
 
+    [Header("DEBUG MENU")]
     [SerializeField] private bool respawnPlayer = false;
+    [SerializeField] private bool switchRightWeapon = false;
+    [SerializeField] private bool switchLeftWeapon = false;
+
 
     public PlayerLocomotionManager PlayerLocomotionManager => playerLocomotionManager;
     public PlayerAnimatorManager PlayerAnimatorManager => playerAnimatorManager;
     public PlayerNetworkManager PlayerNetworkManager => playerNetworkManager;
     public PlayerStatsManager PlayerStatsManager => playerStatsManager;
+    public PlayerInventoryManager PlayerInventoryManager => playerInventoryManager;
+    public PlayerEquipmentManager PlayerEquipmentManager => playerEquipmentManager;
+
 
     #region CharacterNetworkManager Variables
     public FixedString64Bytes CharacterName
@@ -39,6 +50,8 @@ public class PlayerManager : CharacterManager
         playerAnimatorManager = GetComponent<PlayerAnimatorManager>();
         playerNetworkManager = GetComponent<PlayerNetworkManager>();
         playerStatsManager = GetComponent<PlayerStatsManager>();
+        playerInventoryManager = GetComponent<PlayerInventoryManager>();
+        playerEquipmentManager = GetComponent<PlayerEquipmentManager>();
     }
 
     protected override void Update()
@@ -80,6 +93,8 @@ public class PlayerManager : CharacterManager
         }
 
         CurrentHealth.OnValueChanged += playerNetworkManager.CheckHP;
+        playerNetworkManager.CurrentRightHandWeaponID.OnValueChanged += playerNetworkManager.OnCurrentRightHandWeaponIDChange;
+        playerNetworkManager.CurrentLeftHandWeaponID.OnValueChanged += playerNetworkManager.OnCurrentLeftHandWeaponIDChange;
     }
 
     protected override void LateUpdate()
@@ -167,6 +182,18 @@ public class PlayerManager : CharacterManager
             respawnPlayer = false;
             ReviveCharacter();
         }
+
+        if (switchRightWeapon)
+        {
+            switchRightWeapon = false;
+            playerEquipmentManager.SwitchRightWeapon();
+        }
+
+        if (switchLeftWeapon)
+        {
+            switchLeftWeapon = false;
+            playerEquipmentManager.SwitchLeftWeapon();
+        }
     }
 
     public override void ReviveCharacter()
@@ -180,7 +207,8 @@ public class PlayerManager : CharacterManager
             // TODO: 
             // RESET FOCUS
             // PLAY REBIRTH ANIMATION
-            playerAnimatorManager.PlayTargetActionAnimation("Empty", false);
+            
+            playerAnimatorManager.PlayTargetActionAnimation("Empty_01", false);
         }
     }
 }

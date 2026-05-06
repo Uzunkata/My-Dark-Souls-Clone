@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class DamageCollider : MonoBehaviour
 {
+    [Header("Collider")]
+    protected Collider damageCollider;
+
     [Header("Damage")]
     [SerializeField] protected Damage damage;
 
@@ -12,9 +15,19 @@ public class DamageCollider : MonoBehaviour
     [Header("Characters Damaged")]
     protected List<CharacterManager> charactersDamaged = new();
 
+    #region ENCAPSULATION
+
+    public Damage Damage
+    {
+        get => damage;
+        set => damage = value;
+    }
+
+    #endregion
+
     private void OnTriggerEnter(Collider other)
     {
-        CharacterManager damageTarget = other.GetComponent<CharacterManager>();
+        CharacterManager damageTarget = other.GetComponentInParent<CharacterManager>();
 
         if (damageTarget != null)
         {
@@ -40,5 +53,16 @@ public class DamageCollider : MonoBehaviour
         damageEffect.ContactPoint = contactPoint;
 
         damageTarget.CharacterEffectsManager.ProcessEffect(damageEffect);
+    }
+
+    public virtual void EnableDamageCollider()
+    {
+        damageCollider.enabled = true;
+    }
+
+    public virtual void DisableDamageCollider()
+    {
+        damageCollider.enabled = false;
+        charactersDamaged.Clear();
     }
 }

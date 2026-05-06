@@ -1,6 +1,7 @@
 using UnityEngine;
 using Unity.Netcode;
 using System.Collections;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(CharacterNetworkManager))]
@@ -150,6 +151,10 @@ public class CharacterManager : NetworkBehaviour
         }
     }
 
+    protected virtual void Start()
+    {
+        IgnoreMyOwnColliders();
+    }
     public void EnterDefaultFlagState()
     {
         isPerformingAction = false;
@@ -197,5 +202,27 @@ public class CharacterManager : NetworkBehaviour
     public virtual void ReviveCharacter()
     {
         
+    }
+
+    protected virtual void IgnoreMyOwnColliders()
+    {
+        Collider characterControllerCollider = GetComponent<Collider>();
+        Collider[] damagageableCharacterColliders = GetComponentsInChildren<Collider>();
+        List<Collider> ignoreColliders = new();
+
+        foreach (var collider in damagageableCharacterColliders)
+        {
+            ignoreColliders.Add(collider);
+        }
+
+        ignoreColliders.Add(characterControllerCollider);
+
+        foreach(var collider in ignoreColliders)
+        {
+            foreach(var otherCollider in ignoreColliders)
+            {
+                Physics.IgnoreCollision(collider, otherCollider, true);
+            }
+        }
     }
 }
