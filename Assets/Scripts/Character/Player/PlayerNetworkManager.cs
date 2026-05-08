@@ -58,4 +58,16 @@ public class PlayerNetworkManager : CharacterNetworkManager
                 return;
         }
     }
+
+    // protected override void PerformActionAnimationFromServer(string targetAnimation, bool applyRootMotion)
+    // {
+    //     base.PerformActionAnimationFromServer(targetAnimation, applyRootMotion);
+
+    //                                                                                     Debug.Log("I EXIST");
+    //     if (!IsOwner && targetAnimation == "Main_Jump_Start_01")
+    //     {
+    //                                                                                     Debug.Log("I AM IN!");
+    //         player.PlayerLocomotionManager.ApplyJumpingVelocity();
+    //     }
+    // }
 }

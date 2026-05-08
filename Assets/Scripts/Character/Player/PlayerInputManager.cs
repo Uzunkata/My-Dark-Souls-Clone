@@ -31,6 +31,7 @@ public class PlayerInputManager : MonoBehaviour
     [Header("Player Action Input")]
     [SerializeField] private bool dodgeInput = false;
     [SerializeField] private bool sprintInput = false;
+    [SerializeField] private bool jumpInput = false;
     public static PlayerInputManager GetInstance
     {
         get { return instance; }
@@ -64,6 +65,8 @@ public class PlayerInputManager : MonoBehaviour
         SceneManager.activeSceneChanged += OnSceneChange;
 
         instance.enabled = false;
+        if (playerControls != null)
+            playerControls.Disable();
     }
 
     //the reason we need to disable this script before enetring the world, is because
@@ -75,11 +78,17 @@ public class PlayerInputManager : MonoBehaviour
         if (newScene.buildIndex == WorldSaveGameManager.GetInstance.GetWorldSceneIndex())
         {
             instance.enabled = true;
+                    
+            if (playerControls != null)
+                playerControls.Enable();
         }
         //otherwise, we must be at the main menu => disable player controls
         else
         {
             instance.enabled = false;
+
+            if (playerControls != null)
+                playerControls.Disable();
         }
     }
 
@@ -94,6 +103,7 @@ public class PlayerInputManager : MonoBehaviour
             playerControls.PlayerActions.Dodge.performed += i => dodgeInput = true;
             playerControls.PlayerActions.Sprint.performed += i => sprintInput = true;
             playerControls.PlayerActions.Sprint.canceled += i => sprintInput = false;
+            playerControls.PlayerActions.Jump.performed += i => jumpInput = true;
         }
 
         playerControls.Enable();
@@ -116,7 +126,8 @@ public class PlayerInputManager : MonoBehaviour
         HandeCameraMovementInput();
         HandlePlayerMovementInput();
         HandleDodgeInput();
-        HandleSprinting();
+        HandleSprintInput();
+        HandleJumpInput();
     }
 
     //  MOVEMENT
@@ -200,7 +211,7 @@ public class PlayerInputManager : MonoBehaviour
         }
     }
 
-    private void HandleSprinting()
+    private void HandleSprintInput()
     {
         if (sprintInput)
         {
@@ -209,6 +220,18 @@ public class PlayerInputManager : MonoBehaviour
         else
         {
             player.IsSprinting = false;
+        }
+    }
+
+    private void HandleJumpInput()
+    {
+        if (jumpInput)
+        {
+            jumpInput = false;
+
+            // TODO: DISSABLE IF WE HAVE UI OPEN
+
+            player.PlayerLocomotionManager.AttemptToPerformJump();
         }
     }
 }

@@ -15,9 +15,5 @@ public class ResetActionFlag : StateMachineBehaviour
         }
 
         character.EnterDefaultFlagState();
-        // character.IsPerformingAction = false;
-        // character.ApplyRootMotion = false;
-        // character.CanMove = true;
-        // character.CanRotate = true;
     }
 }

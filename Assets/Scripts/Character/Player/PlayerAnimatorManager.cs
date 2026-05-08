@@ -14,6 +14,9 @@ public class PlayerAnimatorManager : CharacterAnimatorManager
 
     private void OnAnimatorMove()
     {
+        if (!player.IsOwner)
+            return;
+
         if (player.ApplyRootMotion)
         {
             Vector3 velocity = player.Animator.deltaPosition;

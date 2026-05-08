@@ -2,32 +2,62 @@ using UnityEngine;
 using Unity.Netcode;
 using System.Collections;
 using System.Collections.Generic;
-
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(CharacterNetworkManager))]
 [RequireComponent(typeof(Animator))]
 
 [RequireComponent(typeof(CharacterEffectsManager))]
 [RequireComponent(typeof(CharacterAnimatorManager))]
+
+[RequireComponent(typeof(CharacterLocomotionManager))]
 public class CharacterManager : NetworkBehaviour
 {
-    [HideInInspector] protected CharacterController characterController;
-    [HideInInspector] protected Animator animator;
-    [HideInInspector] protected CharacterNetworkManager characterNetworkManager;
-    [HideInInspector] protected CharacterEffectsManager characterEffectsManager;
-    [HideInInspector] protected CharacterAnimatorManager characterAnimatorManager;
+    protected CharacterController characterController;
+    protected Animator animator;
+    protected CharacterNetworkManager characterNetworkManager;
+    protected CharacterEffectsManager characterEffectsManager;
+    protected CharacterAnimatorManager characterAnimatorManager;
+    protected CharacterLocomotionManager characterLocomotionManager;
 
     [Header("Flags")]
     [SerializeField] protected bool isPerformingAction = false;
     [SerializeField] protected bool applyRootMotion = false;
     [SerializeField] protected bool canRotate = true;
     [SerializeField] protected bool canMove = true;
+    [SerializeField] protected bool isGrounded = true;
 
     public Animator Animator => animator;
     public CharacterNetworkManager CharacterNetworkManager => characterNetworkManager;
     public CharacterEffectsManager CharacterEffectsManager => characterEffectsManager;
+    public CharacterLocomotionManager CharacterLocomotionManager => characterLocomotionManager;
 
-    #region CharacterNetworkManager Variables
+
+    #region ENCAPSULATION
+
+    public bool IsPerformingAction
+    {
+        get => isPerformingAction;
+        set => isPerformingAction = value;
+    } 
+    public bool ApplyRootMotion
+    {
+        get => applyRootMotion;
+        set => applyRootMotion = value;
+    } 
+    public bool CanRotate
+    {
+        get => canRotate;
+        set => canRotate = value;
+    } 
+    public bool CanMove
+    {
+        get => canMove;
+        set => canMove = value;
+    } 
+
+    #endregion
+
+    #region Passing CharacterNetworkManager Variables
 
     // public Vector3 NetworkPosition
     // {
@@ -59,7 +89,16 @@ public class CharacterManager : NetworkBehaviour
         set => characterNetworkManager.IsSprinting = value;
         get => characterNetworkManager.IsSprinting;
     }
-
+    public bool IsJumping
+    {
+        get => characterNetworkManager.IsJumping.Value;
+        set => characterNetworkManager.IsJumping.Value = value;
+    } 
+    public bool IsGrounded
+    {
+        get => isGrounded;
+        set => isGrounded = value;
+    } 
     public NetworkVariable<bool> IsDead
     {
         get => characterNetworkManager.IsDead;
@@ -85,27 +124,6 @@ public class CharacterManager : NetworkBehaviour
     
     #endregion
 
-    public bool IsPerformingAction
-    {
-        get => isPerformingAction;
-        set => isPerformingAction = value;
-    } 
-    public bool ApplyRootMotion
-    {
-        get => applyRootMotion;
-        set => applyRootMotion = value;
-    } 
-    public bool CanRotate
-    {
-        get => canRotate;
-        set => canRotate = value;
-    } 
-    public bool CanMove
-    {
-        get => canMove;
-        set => canMove = value;
-    } 
-
     //Since our player gameObjects are connected to the Network Manager,
     //they get created with it when we host a game (so when we start the game).
     //we want to preserve this player model for other scenes, so that we can maintain
@@ -119,6 +137,7 @@ public class CharacterManager : NetworkBehaviour
         characterNetworkManager = GetComponent<CharacterNetworkManager>();
         characterEffectsManager = GetComponent<CharacterEffectsManager>();
         characterAnimatorManager = GetComponent<CharacterAnimatorManager>();
+        characterLocomotionManager = GetComponent<CharacterLocomotionManager>();
     }
 
     protected virtual void Update() 
@@ -129,6 +148,7 @@ public class CharacterManager : NetworkBehaviour
         {
             characterNetworkManager.NetworkPosition = transform.position;
             characterNetworkManager.NetworkRotation = transform.rotation;
+            //characterNetworkManager.IsGrounded = isGrounded;
         }
         //if this character is being controlled from else where,
         //then assing its position here localy by the position of its
@@ -148,11 +168,18 @@ public class CharacterManager : NetworkBehaviour
                     transform.rotation, 
                     characterNetworkManager.NetworkRotation, 
                     characterNetworkManager.NetworkRotationSmoothTime);
+
+            //isGrounded = characterNetworkManager.IsGrounded;
         }
     }
 
     protected virtual void Start()
     {
+        if (!IsOwner)
+        {
+            characterController.enabled = false;
+        }
+
         IgnoreMyOwnColliders();
     }
     public void EnterDefaultFlagState()
@@ -161,6 +188,11 @@ public class CharacterManager : NetworkBehaviour
         applyRootMotion = false;
         canMove = true;
         canRotate = true;
+
+        if (IsOwner)
+        {
+            IsJumping = false;
+        }
     }
 
     public void Move(Vector3 moveDirection)

@@ -599,7 +599,7 @@ GameObject:
   - component: {fileID: 907303855025886700}
   - component: {fileID: 3750351766985759804}
   - component: {fileID: 1048682098828578286}
-  - component: {fileID: 556490199199757029}
+  - component: {fileID: -2525828760633558296}
   - component: {fileID: -4187482653634879696}
   m_Layer: 6
   m_Name: Player
@@ -667,6 +667,7 @@ MonoBehaviour:
   applyRootMotion: 0
   canRotate: 1
   canMove: 1
+  isGrounded: 1
   respawnPlayer: 0
   switchRightWeapon: 0
   switchLeftWeapon: 0
@@ -686,6 +687,11 @@ MonoBehaviour:
   networkPositionVelocity: {x: 0, y: 0, z: 0}
   networkPositionSmoothTime: 0.1
   networkRotationSmoothTime: 0.1
+  isJumping:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
   vitality:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
@@ -728,12 +734,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb4035ab0ace7664883050b70f55eeee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerLocomotionManager
+  gravityForce: -40
+  groundLyaer:
+    serializedVersion: 2
+    m_Bits: 1
+  groundCheckSphereRadius: 0.3
+  yVelocity: {x: 0, y: 0, z: 0}
+  grounded_Y_Velocity: -20
+  fallStart_Y_Velocity: -5
   walkingSpeed: 2
   runningSpeed: 5
   sprintingSpeed: 6.5
   sprintingStaminaCost: 2
   rotationSpeed: 15
   dodgeStaminaCost: 25
+  jumpStaminaCost: 25
+  jumpHeight: 2
+  jumpForwardSpeed: 5
+  freeFallingSpeed: 2
 --- !u!114 &-5857582790970015129
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -869,14 +887,14 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 1.8
+  m_Height: 1.7
   m_Radius: 0.23
   m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
+  m_StepOffset: 0
+  m_SkinWidth: 0.1
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.9, z: 0}
---- !u!54 &556490199199757029
+--- !u!54 &-2525828760633558296
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

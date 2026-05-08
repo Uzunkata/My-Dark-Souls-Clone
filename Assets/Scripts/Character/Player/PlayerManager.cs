@@ -92,9 +92,18 @@ public class PlayerManager : CharacterManager
             CurrentStamina.OnValueChanged += playerStatsManager.ResetStaminaRegenTimer;
         }
 
+        // STATS
         CurrentHealth.OnValueChanged += playerNetworkManager.CheckHP;
+
+        // EQUIPMENT
         playerNetworkManager.CurrentRightHandWeaponID.OnValueChanged += playerNetworkManager.OnCurrentRightHandWeaponIDChange;
         playerNetworkManager.CurrentLeftHandWeaponID.OnValueChanged += playerNetworkManager.OnCurrentLeftHandWeaponIDChange;
+
+        //playerNetworkManager.IsJumping.OnValueChanged += playerNetworkManager.OnIsJumpingChanged;
+        if (IsOwner && !IsServer)
+        {
+            LoadCharacterSaveData(WorldSaveGameManager.GetInstance.GetCurrentCharacterSave());
+        }
     }
 
     protected override void LateUpdate()
@@ -144,7 +153,8 @@ public class PlayerManager : CharacterManager
     {
         CharacterName = characterSaveData.CharacterName;
         Vector3 playerPosition = new(characterSaveData.XPosition, characterSaveData.YPosition, characterSaveData.ZPosition);
-        transform.position = playerPosition;
+        // transform.position = playerPosition;
+        Move(playerPosition);
 
         Vitality.Value = characterSaveData.Vitality;
         Endurance.Value = characterSaveData.Endurance;
