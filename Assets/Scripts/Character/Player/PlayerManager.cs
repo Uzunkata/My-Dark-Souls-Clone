@@ -10,6 +10,7 @@ using System;
 
 [RequireComponent(typeof(PlayerInventoryManager))]
 [RequireComponent(typeof(PlayerEquipmentManager))]
+[RequireComponent(typeof(PlayerCombatManager))]
 public class PlayerManager : CharacterManager
 {
     private PlayerLocomotionManager playerLocomotionManager;
@@ -18,12 +19,12 @@ public class PlayerManager : CharacterManager
     private PlayerStatsManager playerStatsManager;
     private PlayerInventoryManager playerInventoryManager;
     private PlayerEquipmentManager playerEquipmentManager;
+    private PlayerCombatManager playerCombatManager;
 
     [Header("DEBUG MENU")]
     [SerializeField] private bool respawnPlayer = false;
     [SerializeField] private bool switchRightWeapon = false;
     [SerializeField] private bool switchLeftWeapon = false;
-
 
     public PlayerLocomotionManager PlayerLocomotionManager => playerLocomotionManager;
     public PlayerAnimatorManager PlayerAnimatorManager => playerAnimatorManager;
@@ -31,6 +32,7 @@ public class PlayerManager : CharacterManager
     public PlayerStatsManager PlayerStatsManager => playerStatsManager;
     public PlayerInventoryManager PlayerInventoryManager => playerInventoryManager;
     public PlayerEquipmentManager PlayerEquipmentManager => playerEquipmentManager;
+    public PlayerCombatManager PlayerCombatManager => playerCombatManager;
 
 
     #region CharacterNetworkManager Variables
@@ -52,6 +54,7 @@ public class PlayerManager : CharacterManager
         playerStatsManager = GetComponent<PlayerStatsManager>();
         playerInventoryManager = GetComponent<PlayerInventoryManager>();
         playerEquipmentManager = GetComponent<PlayerEquipmentManager>();
+        playerCombatManager = GetComponent<PlayerCombatManager>();
     }
 
     protected override void Update()
@@ -70,6 +73,22 @@ public class PlayerManager : CharacterManager
             playerStatsManager.RegenerateStamina();
             DebugMenu();
         }
+    }
+
+    protected override void Start()
+    {
+        base.Start();
+        
+        if (!IsOwner)
+        {
+            LoadProxyAssets();
+        }
+    }
+
+    private void LoadProxyAssets()
+    {
+        playerNetworkManager.OnCurrentRightHandWeaponIDChange(playerNetworkManager.CurrentRightHandWeaponID.Value, playerNetworkManager.CurrentRightHandWeaponID.Value); 
+        playerNetworkManager.OnCurrentLeftHandWeaponIDChange(playerNetworkManager.CurrentLeftHandWeaponID.Value, playerNetworkManager.CurrentLeftHandWeaponID.Value); 
     }
 
     public override void OnNetworkSpawn()
@@ -98,8 +117,8 @@ public class PlayerManager : CharacterManager
         // EQUIPMENT
         playerNetworkManager.CurrentRightHandWeaponID.OnValueChanged += playerNetworkManager.OnCurrentRightHandWeaponIDChange;
         playerNetworkManager.CurrentLeftHandWeaponID.OnValueChanged += playerNetworkManager.OnCurrentLeftHandWeaponIDChange;
+        playerNetworkManager.WeaponInUseID.OnValueChanged += playerNetworkManager.OnWeaponInUseIDChange;
 
-        //playerNetworkManager.IsJumping.OnValueChanged += playerNetworkManager.OnIsJumpingChanged;
         if (IsOwner && !IsServer)
         {
             LoadCharacterSaveData(WorldSaveGameManager.GetInstance.GetCurrentCharacterSave());
@@ -190,6 +209,7 @@ public class PlayerManager : CharacterManager
         if (respawnPlayer)
         {
             respawnPlayer = false;
+            IsDead.Value = false;
             ReviveCharacter();
         }
 

@@ -11,6 +11,11 @@ public class PlayerNetworkManager : CharacterNetworkManager
     [Header("Equipemnt")]
     private NetworkVariable<int> currentRightHandWeaponID = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     private NetworkVariable<int> currentLeftHandWeaponID = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    [SerializeField] private NetworkVariable<int> weaponInUseID = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    [SerializeField] private NetworkVariable<bool> isUsingRightHand = new(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    [SerializeField] private NetworkVariable<bool> isUsingLeftHand = new(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
+
     public FixedString64Bytes CharacterName
     {
         get => characterName.Value;
@@ -19,11 +24,13 @@ public class PlayerNetworkManager : CharacterNetworkManager
 
     public NetworkVariable<int> CurrentRightHandWeaponID => currentRightHandWeaponID;
     public NetworkVariable<int> CurrentLeftHandWeaponID => currentLeftHandWeaponID;
+    public NetworkVariable<int> WeaponInUseID => weaponInUseID;
+    public NetworkVariable<bool> IsUsingRightHand => isUsingRightHand;
+    public NetworkVariable<bool> IsUsingLeftHand => isUsingLeftHand;
 
     protected override void Awake()
     {
         base.Awake();
-
         player = GetComponent<PlayerManager>();
     }
 
@@ -33,12 +40,17 @@ public class PlayerNetworkManager : CharacterNetworkManager
         player.PlayerInventoryManager.CurrentRHWeapon = newWeapon;
         player.PlayerEquipmentManager.LoadRightWeapon();      
     }
-
     public void OnCurrentLeftHandWeaponIDChange(int oldID, int newID)
     {
         WeaponItem newWeapon = Instantiate(WorldItemDatabase.GetInstance.GetWeaponByID(newID));
         player.PlayerInventoryManager.CurrentLHWeapon = newWeapon;
         player.PlayerEquipmentManager.LoadLeftWeapon();
+    }
+    public void OnWeaponInUseIDChange(int oldID, int newID)
+    {
+        WeaponItem newWeapon = Instantiate(WorldItemDatabase.GetInstance.GetWeaponByID(newID));
+        player.PlayerCombatManager.WeaponInUse = newWeapon;
+        player.PlayerEquipmentManager.LoadLeftWeapon();  
     }
 
     public void SetWeaponID(int id, WeaponItem.WeaponModelSlot slot)
@@ -58,16 +70,54 @@ public class PlayerNetworkManager : CharacterNetworkManager
                 return;
         }
     }
+    
+    // this does not necesarily mean that we are using only one of the hands,
+    // it just means that we are using the action on the coresponding weapon
+    // (for example, powerstance actions)
+    public void SetCharacterActionHand(bool isRightHandedAction)
+    {
+        if (isRightHandedAction)
+        {
+            isUsingRightHand.Value = true;
+            isUsingLeftHand.Value = false;
+        }
+        else
+        {
+            isUsingRightHand.Value = false;
+            isUsingLeftHand.Value = true;
+        }
+    }
 
-    // protected override void PerformActionAnimationFromServer(string targetAnimation, bool applyRootMotion)
-    // {
-    //     base.PerformActionAnimationFromServer(targetAnimation, applyRootMotion);
+    [ServerRpc]
+    public void NotifyTheServerOfWeaponActionAnimationServerRpc(ulong clientID, int actionID, int weaponID)
+    {
+        if (IsServer)
+        {
+            NotifyTheServerOfWeaponActionAnimationClientRpc(clientID, actionID, weaponID);
+        }
+    }
 
-    //                                                                                     Debug.Log("I EXIST");
-    //     if (!IsOwner && targetAnimation == "Main_Jump_Start_01")
-    //     {
-    //                                                                                     Debug.Log("I AM IN!");
-    //         player.PlayerLocomotionManager.ApplyJumpingVelocity();
-    //     }
-    // }
+    [ClientRpc]
+    public void NotifyTheServerOfWeaponActionAnimationClientRpc(ulong clientID, int actionID, int weaponID)
+    {
+        if (clientID != NetworkManager.Singleton.LocalClientId)
+        {
+            PerformWeaponActionAnimationFromServer(actionID, weaponID);
+        }
+    }
+
+    protected void PerformWeaponActionAnimationFromServer(int actionID, int weaponID)
+    {
+        WeaponItemAction weaponAction = WorldActionManager.GetInstance.GetWeaponItemActionByID(actionID);
+        WeaponItem weapon = WorldItemDatabase.GetInstance.GetWeaponByID(weaponID);
+
+        if (weaponAction != null && weapon != null)
+        {
+            weaponAction.AttemptToPerformAction(player, weapon);
+        }
+        else
+        {
+            Debug.Log("actionID: [" + actionID + "], or weaponID: [" + weaponID + "] does not exist!");
+        }
+    }
 }

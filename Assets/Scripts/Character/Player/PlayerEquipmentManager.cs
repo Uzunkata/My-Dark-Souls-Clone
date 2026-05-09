@@ -103,6 +103,16 @@ public class PlayerEquipmentManager : CharacterEquipmentManager
         player.PlayerNetworkManager.SetWeaponID(weapon.ItemID, hand);
     }
 
+    private void LoadWeapon(PlayerManager player, WeaponItem weapon, ref GameObject weaponModel, ref WeaponModelInstantiationSlot handSlot, ref WeaponManager weaponManager)
+    {
+        if (weapon != null)
+        {
+            weaponModel = Instantiate(weapon.WeaponModel);
+            handSlot.LoadWeapon(weaponModel);
+            weaponManager = weaponModel.GetComponent<WeaponManager>();
+            weaponManager.SetWeaponDamage(player, weapon);
+        }
+    }
     // RIGHT WEAPON
     public void LoadRightWeapon()
     {
@@ -122,20 +132,39 @@ public class PlayerEquipmentManager : CharacterEquipmentManager
         LoadWeapon(player, leftHandWeapon, ref leftHandWeaponModel, ref leftHandSlot, ref leftWeaponManager);
     }
 
-    private void LoadWeapon(PlayerManager player, WeaponItem weapon, ref GameObject weaponModel, ref WeaponModelInstantiationSlot handSlot, ref WeaponManager weaponManager)
-    {
-        if (weapon != null)
-        {
-            weaponModel = Instantiate(weapon.WeaponModel);
-            handSlot.LoadWeapon(weaponModel);
-            weaponManager = weaponModel.GetComponent<WeaponManager>();
-            weaponManager.SetWeaponDamage(player, weapon);
-        }
-    }
-
     public void SwitchLeftWeapon()
     {
         SwitchWeapon(WeaponItem.WeaponModelSlot.LeftHand);
     }
     
+    // DAMAGE COLLIDERS
+    public void EnableDamageColliders()
+    {
+        // TODO: IF WE ARE DUAL WIELDING WE WILL ENABLE BOTH
+
+        if (player.PlayerNetworkManager.IsUsingLeftHand.Value)
+        {
+            leftWeaponManager.MeleeDamageCollider.EnableDamageCollider();
+        }
+
+        if (player.PlayerNetworkManager.IsUsingRightHand.Value)
+        {
+            rightWeaponManager.MeleeDamageCollider.EnableDamageCollider();
+        }
+
+        // TODO: PLAY WEAPON SWING SOUND FX
+    }
+
+        public void DisableDamageColliders()
+    {
+        if (player.PlayerNetworkManager.IsUsingLeftHand.Value)
+        {
+            leftWeaponManager.MeleeDamageCollider.DisableDamageCollider();
+        }
+
+        if (player.PlayerNetworkManager.IsUsingRightHand.Value)
+        {
+            rightWeaponManager.MeleeDamageCollider.DisableDamageCollider();
+        }
+    }
 }

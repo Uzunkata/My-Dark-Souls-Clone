@@ -82,8 +82,8 @@ public class PlayerLocomotionManager : CharacterLocomotionManager
 
         GetVerticalAndHorizontalInputs();
         //our movement direction is based on camera facing perspective and our inputs (WASD)
-        moveDirection = PlayerCamera.GetInstance.GetCameraObject().transform.forward * verticalMovement;
-        moveDirection += PlayerCamera.GetInstance.GetCameraObject().transform.right * horizontalMovement;
+        moveDirection = PlayerCamera.GetInstance.transform.transform.forward * verticalMovement;
+        moveDirection += PlayerCamera.GetInstance.transform.transform.right * horizontalMovement;
         moveDirection.Normalize();
         //we don't want to move up and right.
         moveDirection.y = 0;

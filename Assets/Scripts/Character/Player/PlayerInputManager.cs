@@ -32,6 +32,9 @@ public class PlayerInputManager : MonoBehaviour
     [SerializeField] private bool dodgeInput = false;
     [SerializeField] private bool sprintInput = false;
     [SerializeField] private bool jumpInput = false;
+    [SerializeField] private bool rightMouseInput = false;
+    [SerializeField] private bool leftMouseInput = false;
+
     public static PlayerInputManager GetInstance
     {
         get { return instance; }
@@ -104,6 +107,8 @@ public class PlayerInputManager : MonoBehaviour
             playerControls.PlayerActions.Sprint.performed += i => sprintInput = true;
             playerControls.PlayerActions.Sprint.canceled += i => sprintInput = false;
             playerControls.PlayerActions.Jump.performed += i => jumpInput = true;
+            playerControls.PlayerActions.RightMouse.performed += i => rightMouseInput = true;
+            playerControls.PlayerActions.LeftMouse.performed += i => leftMouseInput = true;
         }
 
         playerControls.Enable();
@@ -123,11 +128,16 @@ public class PlayerInputManager : MonoBehaviour
 
     private void HandleAllInputs()
     {
+        // MOVEMENT:
         HandeCameraMovementInput();
         HandlePlayerMovementInput();
         HandleDodgeInput();
         HandleSprintInput();
         HandleJumpInput();
+
+        // WEAPON ACTIONS
+        HandleRightMouseInput();
+        HandleLeftMouseInput();
     }
 
     //  MOVEMENT
@@ -140,22 +150,6 @@ public class PlayerInputManager : MonoBehaviour
         //we clamp the values because we want to work with 0, 0.5 and 1:
         //0 = still, 0.5 = walking, 1 = running
         moveAmount = Mathf.Clamp01(Mathf.Abs(playerVerticalInput) + Mathf.Abs(playerHorizontalInput));
-
-        //====================================================================================================
-        // if (inputSystem == InputSystem.KEYBOARD && moveAmount > 0)
-        // {
-        //     moveAmount -= 0.5f;
-        // }
-        //====================================================================================================
-
-        // if (moveAmount > 0 && playerControls.PlayerMovement.Running.IsPressed())
-        // {
-        //     moveAmount = runningSpeedInputIndicator;
-        // }
-        // else if (moveAmount > 0)
-        // {
-        //     moveAmount = walkingSpeedInputIndicator;
-        // }
 
         if (moveAmount <= WALKING_INPUT_INDICATOR && moveAmount > 0)
         {
@@ -232,6 +226,38 @@ public class PlayerInputManager : MonoBehaviour
             // TODO: DISSABLE IF WE HAVE UI OPEN
 
             player.PlayerLocomotionManager.AttemptToPerformJump();
+        }
+    }
+
+    private void HandleRightMouseInput()
+    {
+        if (rightMouseInput)
+        {
+            rightMouseInput = false;
+
+            // TODO: DO NOT PERFORME IF WE HAVE UI OPEN
+
+            player.PlayerNetworkManager.SetCharacterActionHand(true);
+
+            // TODO: TWOHANDING
+
+            player.PlayerCombatManager.PerformWeaponAcion(player.PlayerInventoryManager.CurrentRHWeapon, player.PlayerInventoryManager.CurrentRHWeapon.LightAttack_OneHanded);
+        }
+    }
+
+    private void HandleLeftMouseInput()
+    {
+        if (leftMouseInput)
+        {
+            leftMouseInput = false;
+
+            // TODO: DO NOT PERFORME IF WE HAVE UI OPEN
+
+            player.PlayerNetworkManager.SetCharacterActionHand(false);
+
+            // TODO: TWOHANDING
+
+            player.PlayerCombatManager.PerformWeaponAcion(player.PlayerInventoryManager.CurrentLHWeapon, player.PlayerInventoryManager.CurrentLHWeapon.LightAttack_OneHanded);
         }
     }
 }

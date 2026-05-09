@@ -1,8 +1,11 @@
+using System.Xml.Schema;
 using UnityEngine;
 
 public class WeaponManager : MonoBehaviour
 {
     [SerializeField] private MeleeWeaponDamageCollider meleeDamageCollider;
+
+    public MeleeWeaponDamageCollider MeleeDamageCollider => meleeDamageCollider;
 
     private void Awake()
     {
@@ -13,5 +16,7 @@ public class WeaponManager : MonoBehaviour
     {
         meleeDamageCollider.Damage = weapon.Damage;
         meleeDamageCollider.CharacterCausingDMG = characterWieldingWeapon;
+
+        meleeDamageCollider.LightAttackDamageModifier = weapon.LightAttackDamageModifier;
     }
 }

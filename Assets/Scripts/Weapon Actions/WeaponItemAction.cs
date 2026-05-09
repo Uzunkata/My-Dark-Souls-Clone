@@ -7,6 +7,7 @@ public class WeaponItemAction : ScriptableObject
     {
         LightAttack01,
     }
+    
     [SerializeField] private int actionID;
 
     #region ENCAPSULATION
@@ -19,11 +20,11 @@ public class WeaponItemAction : ScriptableObject
 
     #endregion
 
-    // public virtual void AttemptToPerformAction(PlayerManager performingPlayer, WeaponItem weapon)
-    // {
-    //     if (performingPlayer.IsOwner)
-    //     {
-    //         performingPlayer.PlayerNetworkManager.WeaponInUsedID.Value = weapon.ItemID;
-    //     }
-    // }
+    public virtual void AttemptToPerformAction(PlayerManager performingPlayer, WeaponItem weapon)
+    {
+        if (performingPlayer.IsOwner)
+        {
+            performingPlayer.PlayerNetworkManager.WeaponInUseID.Value = weapon.ItemID;
+        }
+    }
 }

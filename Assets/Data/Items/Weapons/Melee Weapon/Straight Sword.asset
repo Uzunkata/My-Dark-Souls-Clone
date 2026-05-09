@@ -29,3 +29,4 @@ MonoBehaviour:
     holyDamage: 0
   poiseDamage: 10
   baseStaminaCost: 20
+  lightAttack_OneHanded: {fileID: 11400000, guid: 9f08292e393a9064b8087d1fbe673232, type: 2}

@@ -262,6 +262,24 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""RightMouse"",
+                    ""type"": ""Button"",
+                    ""id"": ""515a364a-ad81-468d-9cd5-311eb48f98bd"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""LeftMouse"",
+                    ""type"": ""Button"",
+                    ""id"": ""20c9296f-a3c8-4147-a190-1f49be92b004"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -306,6 +324,28 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""35a83901-ca51-493e-95ad-5a3952eaf676"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RightMouse"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e6f4ddb0-ddf5-44bf-9a05-38395f7c4f53"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LeftMouse"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -364,6 +404,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_PlayerActions_Dodge = m_PlayerActions.FindAction("Dodge", throwIfNotFound: true);
         m_PlayerActions_Sprint = m_PlayerActions.FindAction("Sprint", throwIfNotFound: true);
         m_PlayerActions_Jump = m_PlayerActions.FindAction("Jump", throwIfNotFound: true);
+        m_PlayerActions_RightMouse = m_PlayerActions.FindAction("RightMouse", throwIfNotFound: true);
+        m_PlayerActions_LeftMouse = m_PlayerActions.FindAction("LeftMouse", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_DeleteSave = m_UI.FindAction("Delete Save", throwIfNotFound: true);
@@ -645,6 +687,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerActions_Dodge;
     private readonly InputAction m_PlayerActions_Sprint;
     private readonly InputAction m_PlayerActions_Jump;
+    private readonly InputAction m_PlayerActions_RightMouse;
+    private readonly InputAction m_PlayerActions_LeftMouse;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player Actions".
     /// </summary>
@@ -668,6 +712,14 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "PlayerActions/Jump".
         /// </summary>
         public InputAction @Jump => m_Wrapper.m_PlayerActions_Jump;
+        /// <summary>
+        /// Provides access to the underlying input action "PlayerActions/RightMouse".
+        /// </summary>
+        public InputAction @RightMouse => m_Wrapper.m_PlayerActions_RightMouse;
+        /// <summary>
+        /// Provides access to the underlying input action "PlayerActions/LeftMouse".
+        /// </summary>
+        public InputAction @LeftMouse => m_Wrapper.m_PlayerActions_LeftMouse;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -703,6 +755,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
+            @RightMouse.started += instance.OnRightMouse;
+            @RightMouse.performed += instance.OnRightMouse;
+            @RightMouse.canceled += instance.OnRightMouse;
+            @LeftMouse.started += instance.OnLeftMouse;
+            @LeftMouse.performed += instance.OnLeftMouse;
+            @LeftMouse.canceled += instance.OnLeftMouse;
         }
 
         /// <summary>
@@ -723,6 +781,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
+            @RightMouse.started -= instance.OnRightMouse;
+            @RightMouse.performed -= instance.OnRightMouse;
+            @RightMouse.canceled -= instance.OnRightMouse;
+            @LeftMouse.started -= instance.OnLeftMouse;
+            @LeftMouse.performed -= instance.OnLeftMouse;
+            @LeftMouse.canceled -= instance.OnLeftMouse;
         }
 
         /// <summary>
@@ -910,6 +974,20 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnJump(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "RightMouse" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnRightMouse(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "LeftMouse" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnLeftMouse(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

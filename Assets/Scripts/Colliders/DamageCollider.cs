@@ -4,7 +4,7 @@ using UnityEngine;
 public class DamageCollider : MonoBehaviour
 {
     [Header("Collider")]
-    protected Collider damageCollider;
+    [SerializeField] protected Collider damageCollider;
 
     [Header("Damage")]
     [SerializeField] protected Damage damage;
@@ -25,7 +25,12 @@ public class DamageCollider : MonoBehaviour
 
     #endregion
 
-    private void OnTriggerEnter(Collider other)
+    protected virtual void Awake()
+    {
+        
+    }
+
+    protected virtual void OnTriggerEnter(Collider other)
     {
         CharacterManager damageTarget = other.GetComponentInParent<CharacterManager>();
 

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 [RequireComponent(typeof(CharacterAnimatorManager))]
 
 [RequireComponent(typeof(CharacterLocomotionManager))]
+[RequireComponent(typeof(CharacterCombatManager))]
 public class CharacterManager : NetworkBehaviour
 {
     protected CharacterController characterController;
@@ -17,7 +18,7 @@ public class CharacterManager : NetworkBehaviour
     protected CharacterNetworkManager characterNetworkManager;
     protected CharacterEffectsManager characterEffectsManager;
     protected CharacterAnimatorManager characterAnimatorManager;
-    protected CharacterLocomotionManager characterLocomotionManager;
+    protected CharacterCombatManager characterCombatManager;
 
     [Header("Flags")]
     [SerializeField] protected bool isPerformingAction = false;
@@ -29,7 +30,7 @@ public class CharacterManager : NetworkBehaviour
     public Animator Animator => animator;
     public CharacterNetworkManager CharacterNetworkManager => characterNetworkManager;
     public CharacterEffectsManager CharacterEffectsManager => characterEffectsManager;
-    public CharacterLocomotionManager CharacterLocomotionManager => characterLocomotionManager;
+    public CharacterCombatManager CharacterCombatManager => characterCombatManager;
 
 
     #region ENCAPSULATION
@@ -137,7 +138,7 @@ public class CharacterManager : NetworkBehaviour
         characterNetworkManager = GetComponent<CharacterNetworkManager>();
         characterEffectsManager = GetComponent<CharacterEffectsManager>();
         characterAnimatorManager = GetComponent<CharacterAnimatorManager>();
-        characterLocomotionManager = GetComponent<CharacterLocomotionManager>();
+        characterCombatManager = GetComponent<CharacterCombatManager>();
     }
 
     protected virtual void Update() 

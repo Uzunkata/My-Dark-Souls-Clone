@@ -9,8 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a48c74b17f94404ba7874ccf06a5198, type: 3}
+  m_Script: {fileID: 11500000, guid: ed864ecc19a454b4bb48b0524108a01a, type: 3}
   m_Name: Light Attack Weapon Item Action
   m_EditorClassIdentifier: Assembly-CSharp::LightAttackWeaponItemAction
-  actionID: 1
-  light_Attack_01: Right_Light_Attack_01
+  actionID: 0
+  animationName_Right: Right_Light_Attack_01
+  animationName_Left: Left_Light_Attack_01

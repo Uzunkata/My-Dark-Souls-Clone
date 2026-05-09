@@ -23,13 +23,22 @@ public class WeaponItem : Item
     [Header("Weapon Base Damage")]
     [SerializeField] private Damage damage;
 
+    [Header("Attack Modifier")]
+    [SerializeField] private float lightAttackDamageModifier = 1.1f;
+
+
     [Header("Weapon Poise Damage")]
     [SerializeField] private float poiseDamage = 10;
 
     [Header("Weapon Stamina Cost")]
-    [SerializeField] private int baseStaminaCost = 0;
+    [SerializeField] private int baseStaminaCost = 20;
+    [SerializeField] private float lightAttackStaminaMulpiplier = 0.9f;
+
+    [Header("Weapon Actions")]
+    [SerializeField] private WeaponItemAction lightAttack_OneHanded;
+
     // TODO:
-    // RUNNING/LIGHT/HEAVY ATTACK STAMINA COST
+    // RUNNING/HEAVY ATTACK STAMINA COST
 
     public enum WeaponModelSlot
     {
@@ -78,10 +87,25 @@ public class WeaponItem : Item
         get => baseStaminaCost;
         set => baseStaminaCost = value;
     }
+    public float LightAttackStaminaModifier
+    {
+        get => lightAttackStaminaMulpiplier;
+        set => lightAttackStaminaMulpiplier = value;
+    }
     public float PoiseDamage
     {
         get => poiseDamage;
         set => poiseDamage = value;
+    }
+    public WeaponItemAction LightAttack_OneHanded
+    {
+        get => lightAttack_OneHanded;
+        set => lightAttack_OneHanded = value;
+    }
+    public float LightAttackDamageModifier
+    {
+        get => lightAttackDamageModifier;
+        set => lightAttackDamageModifier = value;  
     }
 
     #endregion

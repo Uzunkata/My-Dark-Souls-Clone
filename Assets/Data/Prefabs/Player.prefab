@@ -597,6 +597,7 @@ GameObject:
   - component: {fileID: -543984390330091185}
   - component: {fileID: 7576948920905587039}
   - component: {fileID: 907303855025886700}
+  - component: {fileID: 8630652019486882855}
   - component: {fileID: 3750351766985759804}
   - component: {fileID: 1048682098828578286}
   - component: {fileID: -2525828760633558296}
@@ -847,6 +848,20 @@ MonoBehaviour:
   leftWeaponManager: {fileID: 0}
   rightHandWeaponModel: {fileID: 0}
   leftHandWeaponModel: {fileID: 0}
+--- !u!114 &8630652019486882855
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2558971318863808023}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16c45b4ee6ac1d14cbabbf934c86e25b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCombatManager
+  currentAttackType: 0
+  weaponInUse: {fileID: 0}
 --- !u!95 &3750351766985759804
 Animator:
   serializedVersion: 7

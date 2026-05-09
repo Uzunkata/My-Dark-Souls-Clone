@@ -2,6 +2,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using Unity.Netcode;
 using NUnit.Framework;
+using UnityEngine.TextCore.Text;
 
 [RequireComponent(typeof(CharacterManager))]
 public class CharacterAnimatorManager : MonoBehaviour
@@ -54,6 +55,31 @@ public class CharacterAnimatorManager : MonoBehaviour
         // tell the server/hosts we played an animation, 
         //and play that animation for everyone present
         character.CharacterNetworkManager.NotifyTheServerOfActionAnimationServerRpc(NetworkManager.Singleton.LocalClientId, targetAnimation, applyRootMotion);
+    }
+
+     public virtual void PlayTargetAttackActionAnimation(
+        WeaponItemAction.AttackType attackType,
+        string targetAnimation,
+         bool isAction, 
+         bool applyRootMotion = true, 
+         bool canRotate = false, 
+         bool canMove = false)
+    {
+        // TODO: 
+        // KEEP TRACK OF WAST ATTACK PERFORMED (FOR COMBOS)
+        // KEEP TRACK OF CURRENT ATTACK TYPE (PARRY, BLOCK, ...)
+        // UPADTE ANIMATION SET TO CURRENT WEAPON ANIMATION
+        // TELL THE NETWORK WE ARE IN ATTACKING FLAG
+
+        character.CharacterCombatManager.CurrentAttackType = attackType;
+        character.ApplyRootMotion = applyRootMotion;
+        character.Animator.CrossFade(targetAnimation, normalizedTransitionDuration);
+        character.IsPerformingAction = isAction;
+        character.CanMove = canMove;
+        character.CanRotate = canRotate;
+
+
+        character.CharacterNetworkManager.NotifyTheServerOfAttackActionAnimationServerRpc(NetworkManager.Singleton.LocalClientId, targetAnimation, applyRootMotion);
     }
 
 }

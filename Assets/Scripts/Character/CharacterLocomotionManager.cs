@@ -30,9 +30,7 @@ public class CharacterLocomotionManager : MonoBehaviour
     
     protected void HandleGroundCheck()
     {
-        //if (character.IsOwner)
-            character.IsGrounded = Physics.CheckSphere(character.transform.position, groundCheckSphereRadius, groundLyaer);
-
+        character.IsGrounded = Physics.CheckSphere(character.transform.position, groundCheckSphereRadius, groundLyaer);
         character.Animator.SetBool("IsGrounded", character.IsGrounded);
     }
 
@@ -46,9 +44,6 @@ public class CharacterLocomotionManager : MonoBehaviour
                 inAirTimer = 0;
                 fallingVelocityHasBeenSet = false;
                 yVelocity.y = grounded_Y_Velocity;
-                
-                // if (character.IsOwner)
-                //     character.IsJumping = false;
             }
         }
         else
@@ -65,9 +60,8 @@ public class CharacterLocomotionManager : MonoBehaviour
         }
 
         if (character.IsOwner)
-        {
             character.Move(yVelocity * Time.deltaTime);
-        }
+
     }
 
     // DEBUG OUR GROUND CHECK SPHERE (DELETE LATER)

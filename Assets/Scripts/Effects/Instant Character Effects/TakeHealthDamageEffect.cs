@@ -12,7 +12,7 @@ public class TakeHealthDamageEffect : InstantCharacterEffect
     private int finalDamage = 0;  // final calculation of the damage
 
     [Header("Poise")]
-    [SerializeField] private float poiseDamage = 0;
+    // [SerializeField] private float poiseDamage = 0;
     [SerializeField] private bool poiseIsBroken = false;
 
     //TODO: BUILD UPS (poison/bleed/...)
@@ -37,11 +37,20 @@ public class TakeHealthDamageEffect : InstantCharacterEffect
         get => damage;
         set => damage = value;
     }
-
     public Vector3 ContactPoint
     {
         get => contactPoint;
         set => contactPoint = value;
+    }
+    public float AngleHitFrom
+    {
+        get => angleHitFrom;
+        set  => angleHitFrom = value;
+    }
+    public CharacterManager CharacterCausingDamage
+    {
+        get => characterCausingDamage;
+        set => characterCausingDamage = value;
     }
 
     #endregion
@@ -87,6 +96,8 @@ public class TakeHealthDamageEffect : InstantCharacterEffect
         }
 
         character.CurrentHealth.Value -= finalDamage;
+
+        Debug.Log("I have taken: " + finalDamage);
 
         // TODO: POISE DAMAGE
     }
