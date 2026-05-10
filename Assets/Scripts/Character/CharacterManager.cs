@@ -11,6 +11,7 @@ using System.Collections.Generic;
 
 [RequireComponent(typeof(CharacterLocomotionManager))]
 [RequireComponent(typeof(CharacterCombatManager))]
+[RequireComponent(typeof(CharacterSoundFXManager))]
 public class CharacterManager : NetworkBehaviour
 {
     protected CharacterController characterController;
@@ -19,6 +20,7 @@ public class CharacterManager : NetworkBehaviour
     protected CharacterEffectsManager characterEffectsManager;
     protected CharacterAnimatorManager characterAnimatorManager;
     protected CharacterCombatManager characterCombatManager;
+    protected CharacterSoundFXManager characterSoundFXManager;
 
     [Header("Flags")]
     [SerializeField] protected bool isPerformingAction = false;
@@ -30,7 +32,9 @@ public class CharacterManager : NetworkBehaviour
     public Animator Animator => animator;
     public CharacterNetworkManager CharacterNetworkManager => characterNetworkManager;
     public CharacterEffectsManager CharacterEffectsManager => characterEffectsManager;
+    public CharacterAnimatorManager CharacterAnimatorManager => characterAnimatorManager;
     public CharacterCombatManager CharacterCombatManager => characterCombatManager;
+    public CharacterSoundFXManager CharacterSoundFXManager => characterSoundFXManager;
 
 
     #region ENCAPSULATION
@@ -139,6 +143,7 @@ public class CharacterManager : NetworkBehaviour
         characterEffectsManager = GetComponent<CharacterEffectsManager>();
         characterAnimatorManager = GetComponent<CharacterAnimatorManager>();
         characterCombatManager = GetComponent<CharacterCombatManager>();
+        characterSoundFXManager = GetComponent<CharacterSoundFXManager>();
     }
 
     protected virtual void Update() 
@@ -212,15 +217,16 @@ public class CharacterManager : NetworkBehaviour
         {
             CurrentHealth.Value = 0;
             IsDead.Value = true;
-        }
+        
 
         // TODO:
         // MANAGE FLAGS
         // IF WE ARE NOT GROUNDED, PLAY A AERIAL DEATH ANIMATION
 
-        if (!manuallySelectDeathAnimation)
-        {
-            characterAnimatorManager.PlayTargetActionAnimation("Death_01", true);
+            if (!manuallySelectDeathAnimation)
+            {
+                characterAnimatorManager.PlayTargetActionAnimation("Death_01", true);
+            }
         }
 
         // TODO:

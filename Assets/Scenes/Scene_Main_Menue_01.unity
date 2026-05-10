@@ -3965,6 +3965,24 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!1 &2117098123 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5186798461305920852, guid: ff9cdb7a72f50a84b8f0bd7130f634ef, type: 3}
+  m_PrefabInstance: {fileID: 4545451440860425086}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2117098127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2117098123}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3519fc8ca0ced964da0b2f0b8a574e36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  players: []
 --- !u!1 &2126384158
 GameObject:
   m_ObjectHideFlags: 0
@@ -4175,6 +4193,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4234078853237721828, guid: 7aaddb20c4bdb9e409e5bfc24bc8426d, type: 3}
+      propertyPath: bloodSplatterVFX
+      value: 
+      objectReference: {fileID: 9176109015807107958, guid: 48c80e67525fdb446b76db7167489f8c, type: 3}
     - target: {fileID: 6553438144122134845, guid: 7aaddb20c4bdb9e409e5bfc24bc8426d, type: 3}
       propertyPath: m_Name
       value: World Character Effects Manager
@@ -4340,7 +4362,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5186798461305920852, guid: ff9cdb7a72f50a84b8f0bd7130f634ef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2117098127}
   m_SourcePrefab: {fileID: 100100000, guid: ff9cdb7a72f50a84b8f0bd7130f634ef, type: 3}
 --- !u!1001 &8089930989320504431
 PrefabInstance:
@@ -4463,6 +4488,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: World Sound FX Manager
       objectReference: {fileID: 0}
+    - target: {fileID: 8213452101087583102, guid: 38399d5abb4c99b42b50789a122b64ca, type: 3}
+      propertyPath: physicalDamageSFX.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8213452101087583102, guid: 38399d5abb4c99b42b50789a122b64ca, type: 3}
+      propertyPath: 'physicalDamageSFX.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8300000, guid: f17e2bfc20a7b1d4c8f16bb6ef998949, type: 3}
+    - target: {fileID: 8213452101087583102, guid: 38399d5abb4c99b42b50789a122b64ca, type: 3}
+      propertyPath: 'physicalDamageSFX.Array.data[1]'
+      value: 
+      objectReference: {fileID: 8300000, guid: d9e8eb8a5d3d85541a8315da6c112c6f, type: 3}
+    - target: {fileID: 8213452101087583102, guid: 38399d5abb4c99b42b50789a122b64ca, type: 3}
+      propertyPath: 'physicalDamageSFX.Array.data[2]'
+      value: 
+      objectReference: {fileID: 8300000, guid: e36fc6595427fea45ab1cab1c4222d74, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

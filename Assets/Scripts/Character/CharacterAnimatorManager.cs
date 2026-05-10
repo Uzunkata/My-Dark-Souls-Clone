@@ -12,6 +12,12 @@ public class CharacterAnimatorManager : MonoBehaviour
     private int horizontalHash;
     private int verticalHash;
 
+    [Header("Damage Animations")]
+    [SerializeField] private string hit_Forward_Medium_01 = "Hit_Forward_Medium_01";
+    [SerializeField] private string hit_Backward_Medium_01 = "Hit_Backward_Medium_01";
+    [SerializeField] private string hit_Left_Medium_01 = "Hit_Left_Medium_01";
+    [SerializeField] private string hit_Right_Medium_01 = "Hit_Right_Medium_01";
+
     public const float dampTime = 0.1f;
     public const float normalizedTransitionDuration = 0.2f;
     public const float animationSprintIndicator = 2;
@@ -57,7 +63,7 @@ public class CharacterAnimatorManager : MonoBehaviour
         character.CharacterNetworkManager.NotifyTheServerOfActionAnimationServerRpc(NetworkManager.Singleton.LocalClientId, targetAnimation, applyRootMotion);
     }
 
-     public virtual void PlayTargetAttackActionAnimation(
+    public virtual void PlayTargetAttackActionAnimation(
         WeaponItemAction.AttackType attackType,
         string targetAnimation,
          bool isAction, 
@@ -82,4 +88,29 @@ public class CharacterAnimatorManager : MonoBehaviour
         character.CharacterNetworkManager.NotifyTheServerOfAttackActionAnimationServerRpc(NetworkManager.Singleton.LocalClientId, targetAnimation, applyRootMotion);
     }
 
+    public string GetDirectionalDamageAnimation(float angleHitFrom)
+    {
+        if (angleHitFrom >= 145 && angleHitFrom <= 180)
+        {
+            return hit_Forward_Medium_01;
+        } 
+        else if (angleHitFrom <= -145 && angleHitFrom >= -180)
+        {
+            return hit_Forward_Medium_01;
+        }
+        else if (angleHitFrom >= -45 && angleHitFrom <= 45)
+        {
+            return hit_Backward_Medium_01;
+        }
+        else if (angleHitFrom >= -144 && angleHitFrom <= -45)
+        {
+            return hit_Left_Medium_01;
+        }
+        else if (angleHitFrom >= 45 && angleHitFrom <= 144)
+        {
+            return hit_Right_Medium_01;
+        }
+
+        throw new System.Exception("such an angle does not exist????");
+    }
 }

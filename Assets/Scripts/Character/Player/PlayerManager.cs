@@ -2,7 +2,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Unity.Collections;
 using System.Collections;
-using System;
+using Unity.Netcode;
+
 [RequireComponent(typeof(PlayerLocomotionManager))]
 [RequireComponent(typeof(PlayerAnimatorManager))]
 [RequireComponent(typeof(PlayerNetworkManager))]
@@ -78,22 +79,36 @@ public class PlayerManager : CharacterManager
     protected override void Start()
     {
         base.Start();
-        
-        if (!IsOwner)
+    }
+
+    private void OnClientConnectedCallback(ulong clientID)
+    {
+        WorldGameSessionManager.GetInstance.AddPlayerToActivePlayerList(this);
+
+        // the server is the host, and the host loads the proxies first =>
+        // the clients are the one who need to "catch up" with the host
+        if (!IsServer && IsOwner)
         {
-            LoadProxyAssets();
+            foreach (var player in WorldGameSessionManager.GetInstance.PlayersList)
+            {
+                if (player != this)
+                {
+                    player.LoadPlayerCharacterOnJoin();
+                }
+            }
         }
     }
 
-    private void LoadProxyAssets()
+    private void LoadPlayerCharacterOnJoin()
     {
-        playerNetworkManager.OnCurrentRightHandWeaponIDChange(playerNetworkManager.CurrentRightHandWeaponID.Value, playerNetworkManager.CurrentRightHandWeaponID.Value); 
-        playerNetworkManager.OnCurrentLeftHandWeaponIDChange(playerNetworkManager.CurrentLeftHandWeaponID.Value, playerNetworkManager.CurrentLeftHandWeaponID.Value); 
+        playerNetworkManager.OnCurrentRightHandWeaponIDChange(0, playerNetworkManager.CurrentRightHandWeaponID.Value); 
+        playerNetworkManager.OnCurrentLeftHandWeaponIDChange(0, playerNetworkManager.CurrentLeftHandWeaponID.Value); 
     }
 
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
+        NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnectedCallback;
 
         if (IsOwner)
         {

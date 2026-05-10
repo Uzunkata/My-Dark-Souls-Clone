@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 [CreateAssetMenu(menuName = "Character Effects/Instant Effects/Take Health Damage")]
 public class TakeHealthDamageEffect : InstantCharacterEffect
@@ -65,11 +66,10 @@ public class TakeHealthDamageEffect : InstantCharacterEffect
         // TODO: 
         // CHECK FOR INVULNERABILITY
         CalculateDamage(character);
-        // CHECK WHICH DIRECTION DAMAGE CAME FROM
-        // PLAY DAMAGE ANIMATION
+        PlayDirectionalBasedDamageAnimation(character);
         // CHECK FOR STATUS BUILD UPS
-        // PLAY SOUND FX
-        // PLAY VFX
+        PlayDamageVFX(character);
+        PlayDamageSFX(character);
 
         // IF CHARACTER IS AI, CHECK FOR NEW TARGET IF CHARACTER CAUSING DAMAGE IS PRESENT
     }
@@ -102,4 +102,38 @@ public class TakeHealthDamageEffect : InstantCharacterEffect
         // TODO: POISE DAMAGE
     }
 
+    private void PlayDamageVFX(CharacterManager character)
+    {
+        // TODO:
+        // FIRE, LIGHTING, HOLY PARTICLE EFFECTS
+
+        character.CharacterEffectsManager.PlayBloodSplatterVFX(contactPoint);
+    }
+
+    private void PlayDamageSFX(CharacterManager character)
+    {
+        // TODO:
+        // FIRE, LIGHTING, HOLY PARTICLE EFFECTS
+
+        AudioClip physicalDamageSFX = WorldSoundFXManager.GetInstance.ChooseRandomSFXFromArray(WorldSoundFXManager.GetInstance.PhysicalDamageSFX);
+
+        character.CharacterSoundFXManager.PlaySoundFX(physicalDamageSFX);
+    }
+
+    private void PlayDirectionalBasedDamageAnimation(CharacterManager character)
+    {
+        if (!character.IsOwner)
+            return;
+
+        // TODO:
+        // CALCULATE IF POSIE IS BROKEN
+        poiseIsBroken = true;
+
+        damageAnimation = character.CharacterAnimatorManager.GetDirectionalDamageAnimation(angleHitFrom);
+
+        if (poiseIsBroken)
+        {
+            character.CharacterAnimatorManager.PlayTargetActionAnimation(damageAnimation, true);
+        }
+    }
 }

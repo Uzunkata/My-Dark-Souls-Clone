@@ -10,7 +10,17 @@ public class WorldSoundFXManager : MonoBehaviour
     }
 
     [Header("Action Sound FX")]
-    public AudioClip rollSFX;
+    [SerializeField] private AudioClip rollSFX;
+
+    [Header("Damage Sound FX")]
+    [SerializeField] private AudioClip[] physicalDamageSFX;
+
+    #region ENCAPSULATION
+
+    public AudioClip RollSFX => rollSFX;
+    public AudioClip[] PhysicalDamageSFX => physicalDamageSFX;
+
+    #endregion
 
     private void Awake()
     {
@@ -27,5 +37,11 @@ public class WorldSoundFXManager : MonoBehaviour
     private void Start()
     {
         
+    }
+
+    public AudioClip ChooseRandomSFXFromArray(AudioClip[] array)
+    {
+        int randomIndex = Random.Range(0, array.Length - 1);
+        return array[randomIndex];
     }
 }

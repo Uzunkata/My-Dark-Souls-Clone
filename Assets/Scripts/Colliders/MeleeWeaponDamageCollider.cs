@@ -46,16 +46,17 @@ public class MeleeWeaponDamageCollider : DamageCollider
         }
     }
 
-    protected override void DamageTarget(CharacterManager damageTarget)
+    protected override void DamageTarget(CharacterManager damagedTarget)
     {
         // MAKEING SURE WE DAMAGE TARGETS ONLY THE FIRST TIME
-        if (charactersDamaged.Contains(damageTarget))
+        if (charactersDamaged.Contains(damagedTarget))
             return;
 
-        charactersDamaged.Add(damageTarget);
+        charactersDamaged.Add(damagedTarget);
         TakeHealthDamageEffect damageEffect = Instantiate(WorldCharacterEffectsManager.GetInstance.TakeDamageEffect);
         damageEffect.Damage = damage;
         damageEffect.ContactPoint = contactPoint;
+        damageEffect.AngleHitFrom = Vector3.SignedAngle(characterCausingDMG.transform.forward, damagedTarget.transform.forward, Vector3.up);
 
         switch(characterCausingDMG.CharacterCombatManager.CurrentAttackType)
         {
@@ -73,8 +74,8 @@ public class MeleeWeaponDamageCollider : DamageCollider
         {   
             Debug.Log("I have delt: " + damageEffect.Damage.CalculateFinalDamage());
 
-            damageTarget.CharacterNetworkManager.NotifyTheServerOfCharacterDamageServerRpc(
-                damageTarget.NetworkObjectId, 
+            damagedTarget.CharacterNetworkManager.NotifyTheServerOfCharacterDamageServerRpc(
+                damagedTarget.NetworkObjectId, 
                 characterCausingDMG.NetworkObjectId, 
                 damageEffect.Damage,
                 damageEffect.AngleHitFrom,

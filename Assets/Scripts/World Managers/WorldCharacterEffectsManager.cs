@@ -14,7 +14,11 @@ public class WorldCharacterEffectsManager : MonoBehaviour
     [SerializeField] private TakeHealthDamageEffect takeDamageEffect;
     [SerializeField] private List<CharacterEffect> characterEffects; 
 
+    [Header("VFX")]
+    [SerializeField] private GameObject bloodSplatterVFX;
+
     public TakeHealthDamageEffect TakeDamageEffect => takeDamageEffect;
+    public GameObject BloodSplatterVFX => bloodSplatterVFX;
     private void Awake()
     {
         if (instance == null)

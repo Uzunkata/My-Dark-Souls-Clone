@@ -15,18 +15,21 @@ MonoBehaviour:
   itemName: Straight Sword
   itemIcon: {fileID: 0}
   itemDescription: Straight Sword
-  itemID: 0
+  itemID: 1
   weaponModel: {fileID: 3494084672845283978, guid: 39462e4cad58fb047b00a0fe4bc84844, type: 3}
   strREQ: 10
   dexREQ: 10
   intREQ: 0
   faithREQ: 0
   damage:
-    physicalDamage: 118
+    physicalDamage: 40
     magicDamage: 0
     fireDamage: 0
     lightningDamage: 0
     holyDamage: 0
+    poiseDamage: 0
+  lightAttackDamageModifier: 1.1
   poiseDamage: 10
   baseStaminaCost: 20
+  lightAttackStaminaMulpiplier: 0.9
   lightAttack_OneHanded: {fileID: 11400000, guid: 9f08292e393a9064b8087d1fbe673232, type: 2}
