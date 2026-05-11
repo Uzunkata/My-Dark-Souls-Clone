@@ -607,7 +607,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 671876936
+  GlobalObjectIdHash: 119139396
   InScenePlacedSourceGlobalObjectIdHash: 119139396
   DeferredDespawnTick: 0
   Ownership: 1
@@ -657,6 +657,11 @@ MonoBehaviour:
   networkPositionVelocity: {x: 0, y: 0, z: 0}
   networkPositionSmoothTime: 0.1
   networkRotationSmoothTime: 0.1
+  isDead:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
   isJumping:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
@@ -702,12 +707,12 @@ MonoBehaviour:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 0
-  isUsingRightHand:
+  isUsingMainHand:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 0
-  isUsingLeftHand:
+  isUsingOffHand:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
@@ -812,18 +817,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f450914df45b784caa195bcd5348d95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  currentRightHandWeapon: {fileID: 11400000, guid: 8398a66e5ca97e34bbe42568d2524b8c, type: 2}
-  currentLeftHandWeapon: {fileID: 11400000, guid: 8398a66e5ca97e34bbe42568d2524b8c, type: 2}
-  weaponsInRightHandSlots:
+  currentMainHandWeapon: {fileID: 11400000, guid: 8398a66e5ca97e34bbe42568d2524b8c, type: 2}
+  currentOffHandWeapon: {fileID: 11400000, guid: 8398a66e5ca97e34bbe42568d2524b8c, type: 2}
+  weaponsInMainHandSlots:
   - {fileID: 11400000, guid: 8398a66e5ca97e34bbe42568d2524b8c, type: 2}
   - {fileID: 11400000, guid: 8398a66e5ca97e34bbe42568d2524b8c, type: 2}
   - {fileID: 11400000, guid: 8398a66e5ca97e34bbe42568d2524b8c, type: 2}
-  weaponsInLeftHandSlots:
+  weaponsInOffHandSlots:
   - {fileID: 11400000, guid: 8398a66e5ca97e34bbe42568d2524b8c, type: 2}
   - {fileID: 11400000, guid: 8398a66e5ca97e34bbe42568d2524b8c, type: 2}
   - {fileID: 11400000, guid: 8398a66e5ca97e34bbe42568d2524b8c, type: 2}
-  currentRHWeaponIndex: -1
-  currentLHWeaponIndex: -1
+  currentMHWeaponIndex: -1
+  currentOHWeaponIndex: -1
 --- !u!114 &907303855025886700
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -836,12 +841,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b37f6752f21ce2a40938a18f8d13c7f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  rightHandSlot: {fileID: 0}
-  leftHandSlot: {fileID: 0}
-  rightWeaponManager: {fileID: 0}
-  leftWeaponManager: {fileID: 0}
-  rightHandWeaponModel: {fileID: 0}
-  leftHandWeaponModel: {fileID: 0}
+  mainHandSlot: {fileID: 0}
+  offHandSlot: {fileID: 0}
+  mainHandWeaponManager: {fileID: 0}
+  offHandWeaponManager: {fileID: 0}
+  mainHandWeaponModel: {fileID: 0}
+  offHandWeaponModel: {fileID: 0}
 --- !u!114 &8630652019486882855
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -854,6 +859,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16c45b4ee6ac1d14cbabbf934c86e25b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCombatManager
+  ShowTopMostFoldoutHeaderGroup: 1
   currentAttackType: 0
   currentLockedOnTarget: {fileID: 0}
   lockOnTransform: {fileID: 575390232248429978}

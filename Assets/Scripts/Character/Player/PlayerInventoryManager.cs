@@ -26,12 +26,12 @@ public class PlayerInventoryManager : CharacterInventoryManager
         set => currentOffHandWeapon = value;
         get => currentOffHandWeapon;
     }
-    public WeaponItem[] WeaponsInRightHandSlots
+    public WeaponItem[] WeaponsInMainHandSlots
     {
         set => weaponsInMainHandSlots = value;
         get => weaponsInMainHandSlots;
     }
-    public WeaponItem[] WeaponsInLeftHandSlots
+    public WeaponItem[] WeaponsInOffHandSlots
     {
         set => weaponsInOffHandSlots = value;
         get => weaponsInOffHandSlots;

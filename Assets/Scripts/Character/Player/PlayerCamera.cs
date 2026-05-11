@@ -177,10 +177,12 @@ public class PlayerCamera : MonoBehaviour
 
     public void HandleLocatingLockOnTargets()
     {
-        float shortestDistance = Mathf.Infinity;
-        float shortestDistanceOfRightTarget = Mathf.Infinity;
-        float shortestDistanceOfLeftTarget = -Mathf.Infinity; // WHEN YOU MOVE LEFT, X GETS NEGATIVE
+        LoadAvailableLockOnTargets();
+        LoadShortestDistanceTargets();
+    }
 
+    private void LoadAvailableLockOnTargets()
+    {
         Collider[] colliders = Physics.OverlapSphere(player.transform.position, lockOnRadius, WorldUtilityManager.GetInstance.CharacterLayers);
                                                                             
         for (int i = 0; i < colliders.Length; i++)
@@ -219,6 +221,12 @@ public class PlayerCamera : MonoBehaviour
                 }
             }
         }
+    }
+    private void LoadShortestDistanceTargets()
+    {
+        float shortestDistance = Mathf.Infinity;
+        float shortestDistanceOfRightTarget = Mathf.Infinity;
+        float shortestDistanceOfLeftTarget = -Mathf.Infinity; // WHEN YOU MOVE LEFT, X GETS NEGATIVE
 
         foreach (CharacterManager character in availableTargets)
         {
@@ -260,7 +268,6 @@ public class PlayerCamera : MonoBehaviour
             }
         }
     }
-
     public void SetLockedCameraHeight()
     {
         if (cameraLockOnHeightCoroutine != null)

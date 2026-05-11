@@ -149,8 +149,8 @@ public class PlayerInputManager : MonoBehaviour
         HandleJumpInput();
 
         // WEAPON ACTIONS
-        HandleRightMouseInput();
-        HandleLeftMouseInput();
+        HandleMainHandAttackInput();
+        HandleOffHandAttackInput();
 
         //  CAMERA LOCK IN
         HandleLockOnInput();
@@ -252,7 +252,7 @@ public class PlayerInputManager : MonoBehaviour
         }
     }
 
-    private void HandleRightMouseInput()
+    private void HandleMainHandAttackInput()
     {
         if (mainHand_LightAttackInput)
         {
@@ -263,6 +263,7 @@ public class PlayerInputManager : MonoBehaviour
             //player.PlayerNetworkManager.SetCharacterActionHand(true);
 
             // TODO: TWOHANDING
+                                                                                        Debug.Log("asasasas: " + player.PlayerInventoryManager.CurrentMHWeapon.ItemID);
 
             if (player.PlayerInventoryManager.CurrentMHWeapon != null)
             {
@@ -272,7 +273,7 @@ public class PlayerInputManager : MonoBehaviour
         }
     }
 
-    private void HandleLeftMouseInput()
+    private void HandleOffHandAttackInput()
     {
         if (offHand_LightAttackInput)
         {
