@@ -27,11 +27,11 @@ public class LightAttackWeaponItemAction :  WeaponItemAction
 
     private void PerformLightAttackAction(PlayerManager performingPlayer, WeaponItem weapon)
     {
-        if (performingPlayer.PlayerNetworkManager.IsUsingRightHand.Value)
+        if (performingPlayer.PlayerNetworkManager.IsUsingMainHand.Value)
         {
             performingPlayer.PlayerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.LightAttack01, animationName_Right, true);
         }
-        if (performingPlayer.PlayerNetworkManager.IsUsingRightHand.Value)
+        if (performingPlayer.PlayerNetworkManager.IsUsingMainHand.Value)
         {
             //performingPlayer.PlayerAnimatorManager.PlayTargetAttackActionAnimation(animationName_Left, true);
         }

@@ -264,16 +264,34 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""RightMouse"",
-                    ""type"": ""Button"",
+                    ""name"": ""Light Main Attack"",
+                    ""type"": ""PassThrough"",
                     ""id"": ""515a364a-ad81-468d-9cd5-311eb48f98bd"",
-                    ""expectedControlType"": """",
+                    ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""LeftMouse"",
+                    ""name"": ""Heavy Main Hand Attack"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""0e1c07d7-2f67-48e3-b2b1-b9c6f4123690"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Heavy Main Charged Attack"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""6b4df664-a943-4a4f-a1eb-ea8983946dfc"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Hold(pressPoint=0.1)"",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Light Off Attack"",
                     ""type"": ""Button"",
                     ""id"": ""20c9296f-a3c8-4147-a190-1f49be92b004"",
                     ""expectedControlType"": """",
@@ -288,15 +306,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Seek Lock On Target"",
-                    ""type"": ""PassThrough"",
-                    ""id"": ""2876c7ce-3ffb-43c2-beca-647484d5662a"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": ""Hold"",
                     ""initialStateCheck"": false
                 },
                 {
@@ -370,7 +379,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""RightMouse"",
+                    ""action"": ""Light Main Attack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -381,7 +390,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""LeftMouse"",
+                    ""action"": ""Light Off Attack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -393,17 +402,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""LockOn"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""ed3189da-ebd7-4d31-95b0-b0224937794d"",
-                    ""path"": ""<Mouse>/middleButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Seek Lock On Target"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -426,6 +424,50 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Seek Right Lock On Target"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""81aa26fc-3df0-4101-89db-c37719ed7870"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Heavy Main Hand Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""537269f5-82be-4ed5-882b-ba6ec0052cf7"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Heavy Main Hand Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""314b2dcb-1bb1-46be-b646-556654350308"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Heavy Main Charged Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3c0e6134-f45d-4368-b281-033a8e556e59"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Heavy Main Charged Attack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -484,10 +526,11 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_PlayerActions_Dodge = m_PlayerActions.FindAction("Dodge", throwIfNotFound: true);
         m_PlayerActions_Sprint = m_PlayerActions.FindAction("Sprint", throwIfNotFound: true);
         m_PlayerActions_Jump = m_PlayerActions.FindAction("Jump", throwIfNotFound: true);
-        m_PlayerActions_RightMouse = m_PlayerActions.FindAction("RightMouse", throwIfNotFound: true);
-        m_PlayerActions_LeftMouse = m_PlayerActions.FindAction("LeftMouse", throwIfNotFound: true);
+        m_PlayerActions_LightMainAttack = m_PlayerActions.FindAction("Light Main Attack", throwIfNotFound: true);
+        m_PlayerActions_HeavyMainHandAttack = m_PlayerActions.FindAction("Heavy Main Hand Attack", throwIfNotFound: true);
+        m_PlayerActions_HeavyMainChargedAttack = m_PlayerActions.FindAction("Heavy Main Charged Attack", throwIfNotFound: true);
+        m_PlayerActions_LightOffAttack = m_PlayerActions.FindAction("Light Off Attack", throwIfNotFound: true);
         m_PlayerActions_LockOn = m_PlayerActions.FindAction("LockOn", throwIfNotFound: true);
-        m_PlayerActions_SeekLockOnTarget = m_PlayerActions.FindAction("Seek Lock On Target", throwIfNotFound: true);
         m_PlayerActions_SeekLeftLockOnTarget = m_PlayerActions.FindAction("Seek Left Lock On Target", throwIfNotFound: true);
         m_PlayerActions_SeekRightLockOnTarget = m_PlayerActions.FindAction("Seek Right Lock On Target", throwIfNotFound: true);
         // UI
@@ -771,10 +814,11 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerActions_Dodge;
     private readonly InputAction m_PlayerActions_Sprint;
     private readonly InputAction m_PlayerActions_Jump;
-    private readonly InputAction m_PlayerActions_RightMouse;
-    private readonly InputAction m_PlayerActions_LeftMouse;
+    private readonly InputAction m_PlayerActions_LightMainAttack;
+    private readonly InputAction m_PlayerActions_HeavyMainHandAttack;
+    private readonly InputAction m_PlayerActions_HeavyMainChargedAttack;
+    private readonly InputAction m_PlayerActions_LightOffAttack;
     private readonly InputAction m_PlayerActions_LockOn;
-    private readonly InputAction m_PlayerActions_SeekLockOnTarget;
     private readonly InputAction m_PlayerActions_SeekLeftLockOnTarget;
     private readonly InputAction m_PlayerActions_SeekRightLockOnTarget;
     /// <summary>
@@ -801,21 +845,25 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @Jump => m_Wrapper.m_PlayerActions_Jump;
         /// <summary>
-        /// Provides access to the underlying input action "PlayerActions/RightMouse".
+        /// Provides access to the underlying input action "PlayerActions/LightMainAttack".
         /// </summary>
-        public InputAction @RightMouse => m_Wrapper.m_PlayerActions_RightMouse;
+        public InputAction @LightMainAttack => m_Wrapper.m_PlayerActions_LightMainAttack;
         /// <summary>
-        /// Provides access to the underlying input action "PlayerActions/LeftMouse".
+        /// Provides access to the underlying input action "PlayerActions/HeavyMainHandAttack".
         /// </summary>
-        public InputAction @LeftMouse => m_Wrapper.m_PlayerActions_LeftMouse;
+        public InputAction @HeavyMainHandAttack => m_Wrapper.m_PlayerActions_HeavyMainHandAttack;
+        /// <summary>
+        /// Provides access to the underlying input action "PlayerActions/HeavyMainChargedAttack".
+        /// </summary>
+        public InputAction @HeavyMainChargedAttack => m_Wrapper.m_PlayerActions_HeavyMainChargedAttack;
+        /// <summary>
+        /// Provides access to the underlying input action "PlayerActions/LightOffAttack".
+        /// </summary>
+        public InputAction @LightOffAttack => m_Wrapper.m_PlayerActions_LightOffAttack;
         /// <summary>
         /// Provides access to the underlying input action "PlayerActions/LockOn".
         /// </summary>
         public InputAction @LockOn => m_Wrapper.m_PlayerActions_LockOn;
-        /// <summary>
-        /// Provides access to the underlying input action "PlayerActions/SeekLockOnTarget".
-        /// </summary>
-        public InputAction @SeekLockOnTarget => m_Wrapper.m_PlayerActions_SeekLockOnTarget;
         /// <summary>
         /// Provides access to the underlying input action "PlayerActions/SeekLeftLockOnTarget".
         /// </summary>
@@ -859,18 +907,21 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
-            @RightMouse.started += instance.OnRightMouse;
-            @RightMouse.performed += instance.OnRightMouse;
-            @RightMouse.canceled += instance.OnRightMouse;
-            @LeftMouse.started += instance.OnLeftMouse;
-            @LeftMouse.performed += instance.OnLeftMouse;
-            @LeftMouse.canceled += instance.OnLeftMouse;
+            @LightMainAttack.started += instance.OnLightMainAttack;
+            @LightMainAttack.performed += instance.OnLightMainAttack;
+            @LightMainAttack.canceled += instance.OnLightMainAttack;
+            @HeavyMainHandAttack.started += instance.OnHeavyMainHandAttack;
+            @HeavyMainHandAttack.performed += instance.OnHeavyMainHandAttack;
+            @HeavyMainHandAttack.canceled += instance.OnHeavyMainHandAttack;
+            @HeavyMainChargedAttack.started += instance.OnHeavyMainChargedAttack;
+            @HeavyMainChargedAttack.performed += instance.OnHeavyMainChargedAttack;
+            @HeavyMainChargedAttack.canceled += instance.OnHeavyMainChargedAttack;
+            @LightOffAttack.started += instance.OnLightOffAttack;
+            @LightOffAttack.performed += instance.OnLightOffAttack;
+            @LightOffAttack.canceled += instance.OnLightOffAttack;
             @LockOn.started += instance.OnLockOn;
             @LockOn.performed += instance.OnLockOn;
             @LockOn.canceled += instance.OnLockOn;
-            @SeekLockOnTarget.started += instance.OnSeekLockOnTarget;
-            @SeekLockOnTarget.performed += instance.OnSeekLockOnTarget;
-            @SeekLockOnTarget.canceled += instance.OnSeekLockOnTarget;
             @SeekLeftLockOnTarget.started += instance.OnSeekLeftLockOnTarget;
             @SeekLeftLockOnTarget.performed += instance.OnSeekLeftLockOnTarget;
             @SeekLeftLockOnTarget.canceled += instance.OnSeekLeftLockOnTarget;
@@ -897,18 +948,21 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
-            @RightMouse.started -= instance.OnRightMouse;
-            @RightMouse.performed -= instance.OnRightMouse;
-            @RightMouse.canceled -= instance.OnRightMouse;
-            @LeftMouse.started -= instance.OnLeftMouse;
-            @LeftMouse.performed -= instance.OnLeftMouse;
-            @LeftMouse.canceled -= instance.OnLeftMouse;
+            @LightMainAttack.started -= instance.OnLightMainAttack;
+            @LightMainAttack.performed -= instance.OnLightMainAttack;
+            @LightMainAttack.canceled -= instance.OnLightMainAttack;
+            @HeavyMainHandAttack.started -= instance.OnHeavyMainHandAttack;
+            @HeavyMainHandAttack.performed -= instance.OnHeavyMainHandAttack;
+            @HeavyMainHandAttack.canceled -= instance.OnHeavyMainHandAttack;
+            @HeavyMainChargedAttack.started -= instance.OnHeavyMainChargedAttack;
+            @HeavyMainChargedAttack.performed -= instance.OnHeavyMainChargedAttack;
+            @HeavyMainChargedAttack.canceled -= instance.OnHeavyMainChargedAttack;
+            @LightOffAttack.started -= instance.OnLightOffAttack;
+            @LightOffAttack.performed -= instance.OnLightOffAttack;
+            @LightOffAttack.canceled -= instance.OnLightOffAttack;
             @LockOn.started -= instance.OnLockOn;
             @LockOn.performed -= instance.OnLockOn;
             @LockOn.canceled -= instance.OnLockOn;
-            @SeekLockOnTarget.started -= instance.OnSeekLockOnTarget;
-            @SeekLockOnTarget.performed -= instance.OnSeekLockOnTarget;
-            @SeekLockOnTarget.canceled -= instance.OnSeekLockOnTarget;
             @SeekLeftLockOnTarget.started -= instance.OnSeekLeftLockOnTarget;
             @SeekLeftLockOnTarget.performed -= instance.OnSeekLeftLockOnTarget;
             @SeekLeftLockOnTarget.canceled -= instance.OnSeekLeftLockOnTarget;
@@ -1103,19 +1157,33 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnJump(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "RightMouse" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Light Main Attack" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnRightMouse(InputAction.CallbackContext context);
+        void OnLightMainAttack(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "LeftMouse" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Heavy Main Hand Attack" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnLeftMouse(InputAction.CallbackContext context);
+        void OnHeavyMainHandAttack(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Heavy Main Charged Attack" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnHeavyMainChargedAttack(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Light Off Attack" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnLightOffAttack(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "LockOn" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
@@ -1123,13 +1191,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnLockOn(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "Seek Lock On Target" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnSeekLockOnTarget(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Seek Left Lock On Target" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>

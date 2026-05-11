@@ -42,8 +42,8 @@ public class WeaponItem : Item
 
     public enum WeaponModelSlot
     {
-        RightHand,
-        LeftHand,
+        MainHand,
+        OffHand,
         // TODO:
         // RIGHT/LEFT HIP
         // BACK

@@ -5,14 +5,14 @@ using UnityEngine;
 public class PlayerEquipmentManager : CharacterEquipmentManager
 {
     private PlayerManager player;
-    [SerializeField] private WeaponModelInstantiationSlot rightHandSlot;
-    [SerializeField] private WeaponModelInstantiationSlot leftHandSlot;
+    [SerializeField] private WeaponModelInstantiationSlot mainHandSlot;
+    [SerializeField] private WeaponModelInstantiationSlot offHandSlot;
 
-    [SerializeField] private WeaponManager rightWeaponManager;
-    [SerializeField] private WeaponManager leftWeaponManager;
+    [SerializeField] private WeaponManager mainHandWeaponManager;
+    [SerializeField] private WeaponManager offHandWeaponManager;
 
-    [SerializeField] private GameObject rightHandWeaponModel;
-    [SerializeField] private GameObject leftHandWeaponModel;
+    [SerializeField] private GameObject mainHandWeaponModel;
+    [SerializeField] private GameObject offHandWeaponModel;
 
     protected override void Awake()
     {
@@ -38,11 +38,11 @@ public class PlayerEquipmentManager : CharacterEquipmentManager
         {
             switch (weaponSlot.WeaponSlot)
             {
-                case WeaponItem.WeaponModelSlot.LeftHand: 
-                    leftHandSlot = weaponSlot;
+                case WeaponItem.WeaponModelSlot.OffHand: 
+                    offHandSlot = weaponSlot;
                     break;
-                case WeaponItem.WeaponModelSlot.RightHand: 
-                    rightHandSlot = weaponSlot;
+                case WeaponItem.WeaponModelSlot.MainHand: 
+                    mainHandSlot = weaponSlot;
                     break;
             }
         }
@@ -91,10 +91,10 @@ public class PlayerEquipmentManager : CharacterEquipmentManager
 
         switch (hand)
         {
-            case WeaponItem.WeaponModelSlot.RightHand:
+            case WeaponItem.WeaponModelSlot.MainHand:
                 player.PlayerAnimatorManager.PlayTargetActionAnimation("Swap_Right_Weapon_01", false, true, true, true);
                 break;
-            case WeaponItem.WeaponModelSlot.LeftHand:
+            case WeaponItem.WeaponModelSlot.OffHand:
                 player.PlayerAnimatorManager.PlayTargetActionAnimation("Swap_Left_Weapon_01", false, true, true, true);
                 break;
             default:
@@ -116,25 +116,25 @@ public class PlayerEquipmentManager : CharacterEquipmentManager
     // RIGHT WEAPON
     public void LoadRightWeapon()
     {
-        WeaponItem rightHandWeapon = player.PlayerInventoryManager.CurrentRHWeapon;
-        LoadWeapon(player, rightHandWeapon, ref rightHandWeaponModel, ref rightHandSlot, ref rightWeaponManager);
+        WeaponItem mainHandWeapon = player.PlayerInventoryManager.CurrentMHWeapon;
+        LoadWeapon(player, mainHandWeapon, ref mainHandWeaponModel, ref mainHandSlot, ref mainHandWeaponManager);
     }
 
     public void SwitchRightWeapon()
     {
-        SwitchWeapon(WeaponItem.WeaponModelSlot.RightHand);
+        SwitchWeapon(WeaponItem.WeaponModelSlot.MainHand);
     }
 
     // LEFT WEAPON
     public void LoadLeftWeapon()
     {
-        WeaponItem leftHandWeapon = player.PlayerInventoryManager.CurrentLHWeapon;
-        LoadWeapon(player, leftHandWeapon, ref leftHandWeaponModel, ref leftHandSlot, ref leftWeaponManager);
+        WeaponItem offHandWeapon = player.PlayerInventoryManager.CurrentOHWeapon;
+        LoadWeapon(player, offHandWeapon, ref offHandWeaponModel, ref offHandSlot, ref offHandWeaponManager);
     }
 
     public void SwitchLeftWeapon()
     {
-        SwitchWeapon(WeaponItem.WeaponModelSlot.LeftHand);
+        SwitchWeapon(WeaponItem.WeaponModelSlot.OffHand);
     }
     
     // DAMAGE COLLIDERS
@@ -142,14 +142,14 @@ public class PlayerEquipmentManager : CharacterEquipmentManager
     {
         // TODO: IF WE ARE DUAL WIELDING WE WILL ENABLE BOTH
 
-        if (player.PlayerNetworkManager.IsUsingLeftHand.Value)
+        if (player.PlayerNetworkManager.IsUsingOffHand.Value)
         {
-            leftWeaponManager.MeleeDamageCollider.EnableDamageCollider();
+            offHandWeaponManager.MeleeDamageCollider.EnableDamageCollider();
         }
 
-        if (player.PlayerNetworkManager.IsUsingRightHand.Value)
+        if (player.PlayerNetworkManager.IsUsingMainHand.Value)
         {
-            rightWeaponManager.MeleeDamageCollider.EnableDamageCollider();
+            mainHandWeaponManager.MeleeDamageCollider.EnableDamageCollider();
         }
 
         // TODO: PLAY WEAPON SWING SOUND FX
@@ -157,14 +157,14 @@ public class PlayerEquipmentManager : CharacterEquipmentManager
 
         public void DisableDamageColliders()
     {
-        if (player.PlayerNetworkManager.IsUsingLeftHand.Value)
+        if (player.PlayerNetworkManager.IsUsingOffHand.Value)
         {
-            leftWeaponManager.MeleeDamageCollider.DisableDamageCollider();
+            offHandWeaponManager.MeleeDamageCollider.DisableDamageCollider();
         }
 
-        if (player.PlayerNetworkManager.IsUsingRightHand.Value)
+        if (player.PlayerNetworkManager.IsUsingMainHand.Value)
         {
-            rightWeaponManager.MeleeDamageCollider.DisableDamageCollider();
+            mainHandWeaponManager.MeleeDamageCollider.DisableDamageCollider();
         }
     }
 }

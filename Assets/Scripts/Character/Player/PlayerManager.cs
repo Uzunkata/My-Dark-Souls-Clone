@@ -101,8 +101,8 @@ public class PlayerManager : CharacterManager
 
     private void LoadPlayerCharacterOnJoin()
     {
-        playerNetworkManager.OnCurrentRightHandWeaponIDChange(0, playerNetworkManager.CurrentRightHandWeaponID.Value); 
-        playerNetworkManager.OnCurrentLeftHandWeaponIDChange(0, playerNetworkManager.CurrentLeftHandWeaponID.Value); 
+        playerNetworkManager.OnCurrentMainHandWeaponIDChange(0, playerNetworkManager.CurrentMainHandWeaponID.Value); 
+        playerNetworkManager.OnCurrentOffHandWeaponIDChange(0, playerNetworkManager.CurrentOffHandWeaponID.Value); 
 
         if (playerNetworkManager.IsLockedOn.Value)
         {
@@ -135,8 +135,8 @@ public class PlayerManager : CharacterManager
         CurrentHealth.OnValueChanged += playerNetworkManager.CheckHP;
 
         // EQUIPMENT
-        playerNetworkManager.CurrentRightHandWeaponID.OnValueChanged += playerNetworkManager.OnCurrentRightHandWeaponIDChange;
-        playerNetworkManager.CurrentLeftHandWeaponID.OnValueChanged += playerNetworkManager.OnCurrentLeftHandWeaponIDChange;
+        playerNetworkManager.CurrentMainHandWeaponID.OnValueChanged += playerNetworkManager.OnCurrentMainHandWeaponIDChange;
+        playerNetworkManager.CurrentOffHandWeaponID.OnValueChanged += playerNetworkManager.OnCurrentOffHandWeaponIDChange;
         playerNetworkManager.WeaponInUseID.OnValueChanged += playerNetworkManager.OnWeaponInUseIDChange;
 
         // LOCK ON

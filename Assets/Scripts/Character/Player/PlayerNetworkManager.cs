@@ -9,11 +9,11 @@ public class PlayerNetworkManager : CharacterNetworkManager
     private NetworkVariable<FixedString64Bytes> characterName = new("Character", NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
     [Header("Equipemnt")]
-    private NetworkVariable<int> currentRightHandWeaponID = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-    private NetworkVariable<int> currentLeftHandWeaponID = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    private NetworkVariable<int> currentMainHandWeaponID = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    private NetworkVariable<int> currentOffHandWeaponID = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     [SerializeField] private NetworkVariable<int> weaponInUseID = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-    [SerializeField] private NetworkVariable<bool> isUsingRightHand = new(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-    [SerializeField] private NetworkVariable<bool> isUsingLeftHand = new(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    [SerializeField] private NetworkVariable<bool> isUsingMainHand = new(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    [SerializeField] private NetworkVariable<bool> isUsingOffHand = new(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
 
     public FixedString64Bytes CharacterName
@@ -22,11 +22,11 @@ public class PlayerNetworkManager : CharacterNetworkManager
         set => characterName.Value = value;
     }
 
-    public NetworkVariable<int> CurrentRightHandWeaponID => currentRightHandWeaponID;
-    public NetworkVariable<int> CurrentLeftHandWeaponID => currentLeftHandWeaponID;
+    public NetworkVariable<int> CurrentMainHandWeaponID => currentMainHandWeaponID;
+    public NetworkVariable<int> CurrentOffHandWeaponID => currentOffHandWeaponID;
     public NetworkVariable<int> WeaponInUseID => weaponInUseID;
-    public NetworkVariable<bool> IsUsingRightHand => isUsingRightHand;
-    public NetworkVariable<bool> IsUsingLeftHand => isUsingLeftHand;
+    public NetworkVariable<bool> IsUsingMainHand => isUsingMainHand;
+    public NetworkVariable<bool> IsUsingOffHand => isUsingOffHand;
 
     protected override void Awake()
     {
@@ -34,16 +34,16 @@ public class PlayerNetworkManager : CharacterNetworkManager
         player = GetComponent<PlayerManager>();
     }
 
-    public void OnCurrentRightHandWeaponIDChange(int oldID, int newID)
+    public void OnCurrentMainHandWeaponIDChange(int oldID, int newID)
     {
         WeaponItem newWeapon = Instantiate(WorldItemDatabase.GetInstance.GetWeaponByID(newID));
-        player.PlayerInventoryManager.CurrentRHWeapon = newWeapon;
+        player.PlayerInventoryManager.CurrentMHWeapon = newWeapon;
         player.PlayerEquipmentManager.LoadRightWeapon();      
     }
-    public void OnCurrentLeftHandWeaponIDChange(int oldID, int newID)
+    public void OnCurrentOffHandWeaponIDChange(int oldID, int newID)
     {
         WeaponItem newWeapon = Instantiate(WorldItemDatabase.GetInstance.GetWeaponByID(newID));
-        player.PlayerInventoryManager.CurrentLHWeapon = newWeapon;
+        player.PlayerInventoryManager.CurrentOHWeapon = newWeapon;
         player.PlayerEquipmentManager.LoadLeftWeapon();
     }
     public void OnWeaponInUseIDChange(int oldID, int newID)
@@ -60,11 +60,11 @@ public class PlayerNetworkManager : CharacterNetworkManager
 
         switch (slot)
         {
-            case WeaponItem.WeaponModelSlot.LeftHand:
-                currentLeftHandWeaponID.Value = id;
+            case WeaponItem.WeaponModelSlot.OffHand:
+                currentOffHandWeaponID.Value = id;
                 break;
-            case WeaponItem.WeaponModelSlot.RightHand:
-                currentRightHandWeaponID.Value = id;
+            case WeaponItem.WeaponModelSlot.MainHand:
+                currentMainHandWeaponID.Value = id;
                 break;
             default:
                 return;
@@ -74,17 +74,17 @@ public class PlayerNetworkManager : CharacterNetworkManager
     // this does not necesarily mean that we are using only one of the hands,
     // it just means that we are using the action on the coresponding weapon
     // (for example, powerstance actions)
-    public void SetCharacterActionHand(bool isRightHandedAction)
+    public void SetCharacterActionHand(bool isMainHandedAction)
     {
-        if (isRightHandedAction)
+        if (isMainHandedAction)
         {
-            isUsingRightHand.Value = true;
-            isUsingLeftHand.Value = false;
+            isUsingMainHand.Value = true;
+            isUsingOffHand.Value = false;
         }
         else
         {
-            isUsingRightHand.Value = false;
-            isUsingLeftHand.Value = true;
+            isUsingMainHand.Value = false;
+            isUsingOffHand.Value = true;
         }
     }
 

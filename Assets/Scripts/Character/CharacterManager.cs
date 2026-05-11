@@ -219,7 +219,11 @@ public class CharacterManager : NetworkBehaviour
         {
             CurrentHealth.Value = 0;
             IsDead.Value = true;
-        
+            
+            isPerformingAction = true;
+            applyRootMotion = false;
+            canMove = false;
+            canRotate = false;
 
         // TODO:
         // MANAGE FLAGS

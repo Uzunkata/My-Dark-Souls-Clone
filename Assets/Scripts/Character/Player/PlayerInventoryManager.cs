@@ -5,36 +5,36 @@ public class PlayerInventoryManager : CharacterInventoryManager
 {
     public static int WEAPON_SLOTS_PER_HAND = 3;
 
-    [SerializeField] private WeaponItem currentRightHandWeapon;
-    [SerializeField] private WeaponItem currentLeftHandWeapon;
+    [SerializeField] private WeaponItem currentMainHandWeapon;
+    [SerializeField] private WeaponItem currentOffHandWeapon;
 
     [Header("Quick Slots")]
-    [SerializeField] private WeaponItem[] weaponsInRightHandSlots = new WeaponItem[WEAPON_SLOTS_PER_HAND];
-    [SerializeField] private WeaponItem[] weaponsInLeftHandSlots = new WeaponItem[WEAPON_SLOTS_PER_HAND];
+    [SerializeField] private WeaponItem[] weaponsInMainHandSlots = new WeaponItem[WEAPON_SLOTS_PER_HAND];
+    [SerializeField] private WeaponItem[] weaponsInOffHandSlots = new WeaponItem[WEAPON_SLOTS_PER_HAND];
     //  -1 means that there is no weapon equiped
-    [SerializeField] private int currentRHWeaponIndex = -1;
-    [SerializeField] private int currentLHWeaponIndex = -1;
+    [SerializeField] private int currentMHWeaponIndex = -1;
+    [SerializeField] private int currentOHWeaponIndex = -1;
 
     #region ENCAPSULATION
-    public WeaponItem CurrentRHWeapon
+    public WeaponItem CurrentMHWeapon
     {
-        set => currentRightHandWeapon = value;
-        get => currentRightHandWeapon;
+        set => currentMainHandWeapon = value;
+        get => currentMainHandWeapon;
     }
-    public WeaponItem CurrentLHWeapon
+    public WeaponItem CurrentOHWeapon
     {
-        set => currentLeftHandWeapon = value;
-        get => currentLeftHandWeapon;
+        set => currentOffHandWeapon = value;
+        get => currentOffHandWeapon;
     }
     public WeaponItem[] WeaponsInRightHandSlots
     {
-        set => weaponsInRightHandSlots = value;
-        get => weaponsInRightHandSlots;
+        set => weaponsInMainHandSlots = value;
+        get => weaponsInMainHandSlots;
     }
     public WeaponItem[] WeaponsInLeftHandSlots
     {
-        set => weaponsInLeftHandSlots = value;
-        get => weaponsInLeftHandSlots;
+        set => weaponsInOffHandSlots = value;
+        get => weaponsInOffHandSlots;
     }
 
     #endregion
@@ -43,11 +43,11 @@ public class PlayerInventoryManager : CharacterInventoryManager
     {
         switch (hand)
         {
-            case WeaponItem.WeaponModelSlot.LeftHand:
-                MoveIndex(increase, ref currentLHWeaponIndex);
+            case WeaponItem.WeaponModelSlot.OffHand:
+                MoveIndex(increase, ref currentOHWeaponIndex);
                 break;
-            case WeaponItem.WeaponModelSlot.RightHand:
-                MoveIndex(increase, ref currentRHWeaponIndex);
+            case WeaponItem.WeaponModelSlot.MainHand:
+                MoveIndex(increase, ref currentMHWeaponIndex);
                 break;
             default:
                 return;
@@ -72,11 +72,11 @@ public class PlayerInventoryManager : CharacterInventoryManager
 
         switch(hand)
         {
-            case WeaponItem.WeaponModelSlot.LeftHand:
-                index = currentLHWeaponIndex;
+            case WeaponItem.WeaponModelSlot.OffHand:
+                index = currentOHWeaponIndex;
                 break;
-            case WeaponItem.WeaponModelSlot.RightHand:
-                index = currentRHWeaponIndex;
+            case WeaponItem.WeaponModelSlot.MainHand:
+                index = currentMHWeaponIndex;
                 break;
             default:
                 return null;
@@ -87,11 +87,11 @@ public class PlayerInventoryManager : CharacterInventoryManager
 
         switch(hand)
         {
-            case WeaponItem.WeaponModelSlot.LeftHand:
-                result = weaponsInLeftHandSlots[index];
+            case WeaponItem.WeaponModelSlot.OffHand:
+                result = weaponsInOffHandSlots[index];
                 break;
-            case WeaponItem.WeaponModelSlot.RightHand:
-                result = weaponsInRightHandSlots[index];
+            case WeaponItem.WeaponModelSlot.MainHand:
+                result = weaponsInMainHandSlots[index];
                 break;
         }
 
@@ -102,11 +102,11 @@ public class PlayerInventoryManager : CharacterInventoryManager
     {
         switch(hand)
         {
-            case WeaponItem.WeaponModelSlot.LeftHand:
-                currentLHWeaponIndex = -1;
+            case WeaponItem.WeaponModelSlot.OffHand:
+                currentOHWeaponIndex = -1;
                 break;
-            case WeaponItem.WeaponModelSlot.RightHand:
-                currentRHWeaponIndex = -1;
+            case WeaponItem.WeaponModelSlot.MainHand:
+                currentMHWeaponIndex = -1;
                 break;
             default:
                 return null;
@@ -119,8 +119,8 @@ public class PlayerInventoryManager : CharacterInventoryManager
     {
         return hand switch
         {
-            WeaponItem.WeaponModelSlot.LeftHand => currentLHWeaponIndex,
-            WeaponItem.WeaponModelSlot.RightHand => currentRHWeaponIndex,
+            WeaponItem.WeaponModelSlot.OffHand => currentOHWeaponIndex,
+            WeaponItem.WeaponModelSlot.MainHand => currentMHWeaponIndex,
             _ => -200,
         };
     }

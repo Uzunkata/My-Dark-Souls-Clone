@@ -38,8 +38,8 @@ public class PlayerInputManager : MonoBehaviour
     [SerializeField] private bool dodgeInput = false;
     [SerializeField] private bool sprintInput = false;
     [SerializeField] private bool jumpInput = false;
-    [SerializeField] private bool rightMouseInput = false;
-    [SerializeField] private bool leftMouseInput = false;
+    [SerializeField] private bool mainHand_LightAttackInput = false;
+    [SerializeField] private bool offHand_LightAttackInput = false;
 
     public static PlayerInputManager GetInstance
     {
@@ -113,8 +113,8 @@ public class PlayerInputManager : MonoBehaviour
             playerControls.PlayerActions.Sprint.performed += i => sprintInput = true;
             playerControls.PlayerActions.Sprint.canceled += i => sprintInput = false;
             playerControls.PlayerActions.Jump.performed += i => jumpInput = true;
-            playerControls.PlayerActions.RightMouse.performed += i => rightMouseInput = true;
-            playerControls.PlayerActions.LeftMouse.performed += i => leftMouseInput = true;
+            playerControls.PlayerActions.LightMainAttack.performed += i => mainHand_LightAttackInput = true;
+            playerControls.PlayerActions.LightOffAttack.performed += i => offHand_LightAttackInput = true;
             playerControls.PlayerActions.LockOn.performed += i => lockOnInput = true;
 
             playerControls.PlayerActions.SeekLeftLockOnTarget.performed += i => seekLeftLockOnInput = true;
@@ -254,9 +254,9 @@ public class PlayerInputManager : MonoBehaviour
 
     private void HandleRightMouseInput()
     {
-        if (rightMouseInput)
+        if (mainHand_LightAttackInput)
         {
-            rightMouseInput = false;
+            mainHand_LightAttackInput = false;
 
             // TODO: DO NOT PERFORME IF WE HAVE UI OPEN
 
@@ -264,19 +264,19 @@ public class PlayerInputManager : MonoBehaviour
 
             // TODO: TWOHANDING
 
-            if (player.PlayerInventoryManager.CurrentRHWeapon != null)
+            if (player.PlayerInventoryManager.CurrentMHWeapon != null)
             {
                 player.PlayerNetworkManager.SetCharacterActionHand(true);
-                player.PlayerCombatManager.PerformWeaponAcion(player.PlayerInventoryManager.CurrentRHWeapon, player.PlayerInventoryManager.CurrentRHWeapon.LightAttack_OneHanded);
+                player.PlayerCombatManager.PerformWeaponAcion(player.PlayerInventoryManager.CurrentMHWeapon, player.PlayerInventoryManager.CurrentMHWeapon.LightAttack_OneHanded);
             }
         }
     }
 
     private void HandleLeftMouseInput()
     {
-        if (leftMouseInput)
+        if (offHand_LightAttackInput)
         {
-            leftMouseInput = false;
+            offHand_LightAttackInput = false;
 
             // TODO: DO NOT PERFORME IF WE HAVE UI OPEN
 
@@ -284,10 +284,10 @@ public class PlayerInputManager : MonoBehaviour
 
             // TODO: TWOHANDING
 
-            if (player.PlayerInventoryManager.CurrentLHWeapon != null)
+            if (player.PlayerInventoryManager.CurrentOHWeapon != null)
             {
                 player.PlayerNetworkManager.SetCharacterActionHand(false);
-                player.PlayerCombatManager.PerformWeaponAcion(player.PlayerInventoryManager.CurrentLHWeapon, player.PlayerInventoryManager.CurrentLHWeapon.LightAttack_OneHanded);
+                player.PlayerCombatManager.PerformWeaponAcion(player.PlayerInventoryManager.CurrentOHWeapon, player.PlayerInventoryManager.CurrentOHWeapon.LightAttack_OneHanded);
             }
         }
     }
