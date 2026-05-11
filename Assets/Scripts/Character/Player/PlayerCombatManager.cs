@@ -1,11 +1,14 @@
 using UnityEngine;
 using Unity.Netcode;
+using Unity.VisualScripting;
 
 [RequireComponent(typeof(PlayerManager))]
 public class PlayerCombatManager : CharacterCombatManager
 {
 
     private PlayerManager player;
+
+    [Header("Weapons")]
     [SerializeField] private WeaponItem weaponInUse;
 
     #region ENCAPSULATION
@@ -56,6 +59,16 @@ public class PlayerCombatManager : CharacterCombatManager
         }
 
         player.CurrentStamina.Value -= Mathf.RoundToInt(staminaDeducted);
+    }
+
+    public override void SetTarget(CharacterManager newTarget)
+    {
+        base.SetTarget(newTarget);
+
+        if (player.IsOwner)
+        {
+            PlayerCamera.GetInstance.SetLockedCameraHeight();
+        }
     }
 }
 

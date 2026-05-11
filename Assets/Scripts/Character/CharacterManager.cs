@@ -21,6 +21,7 @@ public class CharacterManager : NetworkBehaviour
     protected CharacterAnimatorManager characterAnimatorManager;
     protected CharacterCombatManager characterCombatManager;
     protected CharacterSoundFXManager characterSoundFXManager;
+    protected CharacterLocomotionManager characterLocomotionManager;
 
     [Header("Flags")]
     [SerializeField] protected bool isPerformingAction = false;
@@ -144,6 +145,7 @@ public class CharacterManager : NetworkBehaviour
         characterAnimatorManager = GetComponent<CharacterAnimatorManager>();
         characterCombatManager = GetComponent<CharacterCombatManager>();
         characterSoundFXManager = GetComponent<CharacterSoundFXManager>();
+        characterLocomotionManager = GetComponent<CharacterLocomotionManager>();
     }
 
     protected virtual void Update() 

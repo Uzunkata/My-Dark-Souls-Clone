@@ -12,25 +12,25 @@ public class CharacterNetworkManager : NetworkBehaviour
     [SerializeField] protected float networkRotationSmoothTime = 0.1f;
 
     [Header("Status")]
-    protected NetworkVariable<bool> isDead = new (false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    [SerializeField] protected NetworkVariable<bool> isDead = new (false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
     [Header("Position")]
     protected NetworkVariable<Vector3> networkPosition = new (Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
     [Header("Rotation")]
     protected NetworkVariable<Quaternion> networkRotation = new (Quaternion.identity, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    protected NetworkVariable<ulong> currentTargetNetworkObjectID = new (0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
     [Header("Animator")]
     protected NetworkVariable<float> verticalMovement = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     protected NetworkVariable<float> horizontalMovement = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     protected NetworkVariable<float> moveAmount = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-    // protected NetworkVariable<float> inAirTimer = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-    // [SerializeField] protected NetworkVariable<float> verticalVelocity = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
     [Header("Flags")]
     protected NetworkVariable<bool> isSprinting = new(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     [SerializeField] protected NetworkVariable<bool> isJumping = new(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-    //[SerializeField] protected NetworkVariable<bool> isGrounded = new(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    [SerializeField] protected NetworkVariable<bool> isLockedOn = new(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
 
     [Header("Stats")]
     [SerializeField] protected NetworkVariable<int> vitality = new(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
@@ -42,7 +42,7 @@ public class CharacterNetworkManager : NetworkBehaviour
     [SerializeField] protected NetworkVariable<float> currentStamina = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     [SerializeField] protected NetworkVariable<int> maxStamina = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
-    #region VARIABLES GETTERS AND SETTERS
+    #region ENCAPSULATION
     public Vector3 NetworkPosition
     {
         get => networkPosition.Value;
@@ -58,11 +58,6 @@ public class CharacterNetworkManager : NetworkBehaviour
         get => verticalMovement.Value;
         set => verticalMovement.Value = value;
     }
-    // public float VerticalVelocity
-    // {
-    //     get => verticalVelocity.Value;
-    //     set => verticalVelocity.Value = value;
-    // }
 
     public float HorizontalMovement
     {
@@ -80,16 +75,9 @@ public class CharacterNetworkManager : NetworkBehaviour
         get => isSprinting.Value;
     }
     public NetworkVariable<bool> IsJumping => isJumping;
-    // public bool IsGrounded
-    // {
-    //     set => isGrounded.Value = value;
-    //     get => isGrounded.Value;
-    // }
-    // public float InAirTimer
-    // {
-    //     set => inAirTimer.Value = value;
-    //     get => inAirTimer.Value;
-    // }
+    public NetworkVariable<bool> IsLockedOn => isLockedOn;
+
+    public NetworkVariable<ulong> CurrentTargetNetworkObjectID => currentTargetNetworkObjectID;
 
     public float NetworkPositionSmoothTime => networkPositionSmoothTime;
     public float NetworkRotationSmoothTime => networkRotationSmoothTime;
@@ -121,6 +109,22 @@ public class CharacterNetworkManager : NetworkBehaviour
         {
             if (currentHealth.Value > maxHealth.Value)
                 currentHealth.Value = maxHealth.Value;
+        }
+    }
+
+    public void OnLockOnTargetIDChange(ulong oldID, ulong newID)
+    {
+        if (!IsOwner)
+        {
+            character.CharacterCombatManager.CurrentLockedOnTarget = NetworkManager.Singleton.SpawnManager.SpawnedObjects[newID].gameObject.GetComponent<CharacterManager>();
+        }
+    }
+
+    public void OnIsLockedOnChange(bool oldValue, bool newValue)
+    {
+        if (!newValue)
+        {
+            character.CharacterCombatManager.CurrentLockedOnTarget = null;
         }
     }
 
@@ -182,7 +186,6 @@ public class CharacterNetworkManager : NetworkBehaviour
         character.ApplyRootMotion = applyRootMotion;
         character.Animator.CrossFade(targetAnimation, CharacterAnimatorManager.normalizedTransitionDuration);
     }
-
 
     //DAMAGE
     [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]

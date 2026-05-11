@@ -54,7 +54,17 @@ public class PlayerLocomotionManager : CharacterLocomotionManager
             horizontalMovement = player.CharacterNetworkManager.HorizontalMovement;
             moveAmount = player.CharacterNetworkManager.MoveAmount;
 
-            player.PlayerAnimatorManager.UpdateAnimatorMovementParameters(0, moveAmount, player.IsSprinting);
+        if (!player.PlayerNetworkManager.IsLockedOn.Value || player.PlayerNetworkManager.IsSprinting)
+        {
+            //The reason we are apssing 0 to the horizontal movement
+            //is because we want the player to move only where he is facing
+            //when his camera is not locked on an object
+            player.PlayerAnimatorManager.UpdateAnimatorMovementParameters(0, moveAmount, player.IsSprinting);  
+        }
+        else
+        {
+            player.PlayerAnimatorManager.UpdateAnimatorMovementParameters(horizontalMovement, verticalMovement, player.IsSprinting);  
+        }
         }
     }
 
@@ -103,15 +113,6 @@ public class PlayerLocomotionManager : CharacterLocomotionManager
                 player.Move(walkingSpeed * Time.deltaTime * moveDirection);
             }
         }
-
-        // if (PlayerInputManager.GetInstance.GetMovementSpeedType == PlayerInputManager.MovementSpeedType.RUNNING)
-        // {
-        //     player.Move(moveDirection * runningSpeed * Time.deltaTime);
-        // } 
-        // else if (PlayerInputManager.GetInstance.GetMovementSpeedType == PlayerInputManager.MovementSpeedType.WALKING)
-        // {
-        //     player.Move(moveDirection * walkingSpeed * Time.deltaTime);
-        // }
     }
 
     private void HandleJumpingMovement()
@@ -127,21 +128,43 @@ public class PlayerLocomotionManager : CharacterLocomotionManager
 
     private void HandleRotation()
     {
+        if (player.IsDead.Value)
+            return;
+
         if (!player.CanRotate)
             return;
 
-        GetVerticalAndHorizontalInputs();
-       targetRotationDirection = Vector3.zero;
-       targetRotationDirection = PlayerCamera.GetInstance.GetCameraObject().transform.forward * verticalMovement;
-       targetRotationDirection += PlayerCamera.GetInstance.GetCameraObject().transform.right * horizontalMovement;
-       targetRotationDirection.Normalize();
-       targetRotationDirection.y = 0;
-
-       if (targetRotationDirection == Vector3.zero)
+        if (player.PlayerNetworkManager.IsLockedOn.Value && !player.PlayerNetworkManager.IsSprinting)
         {
-            targetRotationDirection = transform.forward;
-        }
+            if (player.PlayerCombatManager.CurrentLockedOnTarget == null)
+                return;
 
+            targetRotationDirection = player.PlayerCombatManager.CurrentLockedOnTarget.transform.position - player.transform.position;
+            targetRotationDirection.y = 0;
+            targetRotationDirection.Normalize();
+
+            Quaternion newRotation = Quaternion.LookRotation(targetRotationDirection);
+            Quaternion targetRotation = Quaternion.Slerp(transform.rotation, newRotation, rotationSpeed * Time.deltaTime);
+            transform.rotation = targetRotation;
+        }
+        else
+        {
+            SyncRotationWithMovement();
+        }
+    }
+
+    private void SyncRotationWithMovement()
+    {
+        GetVerticalAndHorizontalInputs();
+        targetRotationDirection = Vector3.zero;
+        targetRotationDirection = PlayerCamera.GetInstance.GetCameraObject().transform.forward * verticalMovement;
+        targetRotationDirection += PlayerCamera.GetInstance.GetCameraObject().transform.right * horizontalMovement;
+        targetRotationDirection.Normalize();
+        targetRotationDirection.y = 0;
+
+        if (targetRotationDirection == Vector3.zero)
+            targetRotationDirection = transform.forward;
+            
         Quaternion newRotation = Quaternion.LookRotation(targetRotationDirection);
         Quaternion targetRotation = Quaternion.Slerp(transform.rotation, newRotation, rotationSpeed * Time.deltaTime);
         transform.rotation = targetRotation;

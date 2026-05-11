@@ -103,6 +103,11 @@ public class PlayerManager : CharacterManager
     {
         playerNetworkManager.OnCurrentRightHandWeaponIDChange(0, playerNetworkManager.CurrentRightHandWeaponID.Value); 
         playerNetworkManager.OnCurrentLeftHandWeaponIDChange(0, playerNetworkManager.CurrentLeftHandWeaponID.Value); 
+
+        if (playerNetworkManager.IsLockedOn.Value)
+        {
+            playerNetworkManager.OnLockOnTargetIDChange(0, playerNetworkManager.CurrentTargetNetworkObjectID.Value);
+        }
     }
 
     public override void OnNetworkSpawn()
@@ -133,6 +138,10 @@ public class PlayerManager : CharacterManager
         playerNetworkManager.CurrentRightHandWeaponID.OnValueChanged += playerNetworkManager.OnCurrentRightHandWeaponIDChange;
         playerNetworkManager.CurrentLeftHandWeaponID.OnValueChanged += playerNetworkManager.OnCurrentLeftHandWeaponIDChange;
         playerNetworkManager.WeaponInUseID.OnValueChanged += playerNetworkManager.OnWeaponInUseIDChange;
+
+        // LOCK ON
+        playerNetworkManager.IsLockedOn.OnValueChanged += playerNetworkManager.OnIsLockedOnChange;
+        playerNetworkManager.CurrentTargetNetworkObjectID.OnValueChanged += playerNetworkManager.OnLockOnTargetIDChange;
 
         if (IsOwner && !IsServer)
         {
@@ -224,7 +233,6 @@ public class PlayerManager : CharacterManager
         if (respawnPlayer)
         {
             respawnPlayer = false;
-            IsDead.Value = false;
             ReviveCharacter();
         }
 
@@ -247,13 +255,14 @@ public class PlayerManager : CharacterManager
 
         if (IsOwner)
         {
+            IsDead.Value = false;
             CurrentHealth.Value = MaxHealth.Value;
             CurrentStamina.Value = MaxStamina.Value;
             // TODO: 
             // RESET FOCUS
             // PLAY REBIRTH ANIMATION
             
-            playerAnimatorManager.PlayTargetActionAnimation("Empty_01", false);
+            playerAnimatorManager.PlayTargetActionAnimation("Empty", false);
         }
     }
 }

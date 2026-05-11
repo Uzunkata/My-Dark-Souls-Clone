@@ -32,16 +32,16 @@ public class CharacterAnimatorManager : MonoBehaviour
 
     public void UpdateAnimatorMovementParameters(float horizontalMovement, float verticalMovement, bool isSprinting)
     {
-        float horizontalAmount = horizontalMovement;
-        float verticalAmount = verticalMovement;
+        float snappedHorizontalAmount = RoundMovement(horizontalMovement);
+        float snappedVerticalAmount = RoundMovement(verticalMovement);
 
         if (isSprinting)
         {
-            verticalAmount = animationSprintIndicator;
+            snappedVerticalAmount = animationSprintIndicator;
         }
 
-        character.Animator.SetFloat(horizontalHash, horizontalAmount, dampTime, Time.deltaTime);
-        character.Animator.SetFloat(verticalHash, verticalAmount, dampTime, Time.deltaTime);
+        character.Animator.SetFloat(horizontalHash, snappedHorizontalAmount, dampTime, Time.deltaTime);
+        character.Animator.SetFloat(verticalHash, snappedVerticalAmount, dampTime, Time.deltaTime);
     }
 
     //
@@ -112,5 +112,21 @@ public class CharacterAnimatorManager : MonoBehaviour
         }
 
         throw new System.Exception("such an angle does not exist????");
+    }
+
+    private float RoundMovement(float movement)
+    {
+        float result = 0;
+
+        if (movement > 0 && movement <= 0.5f)
+            result = 0.5f;
+        if (movement > 0.5f && movement <= 1f)
+            result = 1;
+        if (movement < 0 && movement >= -0.5f)
+            result = -0.5f;
+        if (movement < -0.5f && movement >= -1)
+            result = -1;
+
+        return result;
     }
 }

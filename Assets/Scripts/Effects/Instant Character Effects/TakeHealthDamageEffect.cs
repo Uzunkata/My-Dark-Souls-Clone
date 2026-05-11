@@ -125,6 +125,9 @@ public class TakeHealthDamageEffect : InstantCharacterEffect
         if (!character.IsOwner)
             return;
 
+        if (character.IsDead.Value)
+            return;
+
         // TODO:
         // CALCULATE IF POSIE IS BROKEN
         poiseIsBroken = true;

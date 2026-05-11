@@ -20,6 +20,12 @@ public class PlayerInputManager : MonoBehaviour
     [SerializeField] private Vector2 cameraMovementInput;
     [SerializeField] private float cameraVerticalInput;
     [SerializeField] private float cameraHorizontalInput;
+    [SerializeField] private bool lockOnInput = false;
+    //[SerializeField] private bool seekLockOnTargetInput = false;
+    [SerializeField] private bool seekLeftLockOnInput = false;
+    [SerializeField] private bool seekRightLockOnInput = false;
+    private Coroutine lockOnCoroutine;
+
 
     [Header("Player Movement Input")]
     // [SerializeField] private InputSystem inputSystem = InputSystem.KEYBOARD;
@@ -109,6 +115,13 @@ public class PlayerInputManager : MonoBehaviour
             playerControls.PlayerActions.Jump.performed += i => jumpInput = true;
             playerControls.PlayerActions.RightMouse.performed += i => rightMouseInput = true;
             playerControls.PlayerActions.LeftMouse.performed += i => leftMouseInput = true;
+            playerControls.PlayerActions.LockOn.performed += i => lockOnInput = true;
+
+            playerControls.PlayerActions.SeekLeftLockOnTarget.performed += i => seekLeftLockOnInput = true;
+            playerControls.PlayerActions.SeekRightLockOnTarget.performed += i => seekRightLockOnInput = true;
+            //playerControls.PlayerActions.SeekLockOnTarget.performed += i => seekLockOnTargetInput = true;
+            //playerControls.PlayerActions.SeekLockOnTarget.canceled += i => seekLockOnTargetInput = false;
+
         }
 
         playerControls.Enable();
@@ -138,6 +151,11 @@ public class PlayerInputManager : MonoBehaviour
         // WEAPON ACTIONS
         HandleRightMouseInput();
         HandleLeftMouseInput();
+
+        //  CAMERA LOCK IN
+        HandleLockOnInput();
+        HandleLeftLockOnTargetSwitchInput();
+        HandleRightLockOnTargetSwitchInput();
     }
 
     //  MOVEMENT
@@ -163,12 +181,17 @@ public class PlayerInputManager : MonoBehaviour
         if (player == null)
             return;
 
-        //The reason we are apssing 0 to the horizontal movement
-        //is because we want the player to move only where he is facing
-        //when his camera is not locked on an object
-        player.PlayerAnimatorManager.UpdateAnimatorMovementParameters(0, moveAmount, player.IsSprinting);
-
-        //TODO: if we are locked on:
+        if (!player.PlayerNetworkManager.IsLockedOn.Value || player.PlayerNetworkManager.IsSprinting)
+        {
+            //The reason we are apssing 0 to the horizontal movement
+            //is because we want the player to move only where he is facing
+            //when his camera is not locked on an object
+            player.PlayerAnimatorManager.UpdateAnimatorMovementParameters(0, moveAmount, player.IsSprinting);  
+        }
+        else
+        {
+            player.PlayerAnimatorManager.UpdateAnimatorMovementParameters(playerHorizontalInput, playerVerticalInput, player.IsSprinting);  
+        }
     }
 
     private void HandeCameraMovementInput()
@@ -237,11 +260,15 @@ public class PlayerInputManager : MonoBehaviour
 
             // TODO: DO NOT PERFORME IF WE HAVE UI OPEN
 
-            player.PlayerNetworkManager.SetCharacterActionHand(true);
+            //player.PlayerNetworkManager.SetCharacterActionHand(true);
 
             // TODO: TWOHANDING
 
-            player.PlayerCombatManager.PerformWeaponAcion(player.PlayerInventoryManager.CurrentRHWeapon, player.PlayerInventoryManager.CurrentRHWeapon.LightAttack_OneHanded);
+            if (player.PlayerInventoryManager.CurrentRHWeapon != null)
+            {
+                player.PlayerNetworkManager.SetCharacterActionHand(true);
+                player.PlayerCombatManager.PerformWeaponAcion(player.PlayerInventoryManager.CurrentRHWeapon, player.PlayerInventoryManager.CurrentRHWeapon.LightAttack_OneHanded);
+            }
         }
     }
 
@@ -253,11 +280,94 @@ public class PlayerInputManager : MonoBehaviour
 
             // TODO: DO NOT PERFORME IF WE HAVE UI OPEN
 
-            player.PlayerNetworkManager.SetCharacterActionHand(false);
+            //player.PlayerNetworkManager.SetCharacterActionHand(false);
 
             // TODO: TWOHANDING
 
-            player.PlayerCombatManager.PerformWeaponAcion(player.PlayerInventoryManager.CurrentLHWeapon, player.PlayerInventoryManager.CurrentLHWeapon.LightAttack_OneHanded);
+            if (player.PlayerInventoryManager.CurrentLHWeapon != null)
+            {
+                player.PlayerNetworkManager.SetCharacterActionHand(false);
+                player.PlayerCombatManager.PerformWeaponAcion(player.PlayerInventoryManager.CurrentLHWeapon, player.PlayerInventoryManager.CurrentLHWeapon.LightAttack_OneHanded);
+            }
+        }
+    }
+
+    private void HandleLockOnInput()
+    {
+        if (player.PlayerNetworkManager.IsLockedOn.Value)
+        {
+            if (player.PlayerCombatManager.CurrentLockedOnTarget == null)
+                return;
+
+            if(player.PlayerCombatManager.CurrentLockedOnTarget.IsDead.Value)
+            {
+                player.PlayerNetworkManager.IsLockedOn.Value = false;
+                // FIND NEW TARGET?
+            }
+
+            // this assures us that the coroutine never runs multiple times, overlapping itself
+            if (lockOnCoroutine != null)
+                StopCoroutine(lockOnCoroutine);
+
+            lockOnCoroutine = StartCoroutine(PlayerCamera.GetInstance.WaitThenFindNewTarget());
+        }
+
+        if (lockOnInput)
+        {
+            lockOnInput = false;
+            if (player.PlayerNetworkManager.IsLockedOn.Value)
+            {
+                player.PlayerNetworkManager.IsLockedOn.Value = false;
+                PlayerCamera.GetInstance.ClearLockOnTargets();
+            }
+            else
+            {
+                // TODO: IF WE ARE AIMING/USING A RANGE WEAPON => DON'T ENABLE?
+
+                PlayerCamera.GetInstance.HandleLocatingLockOnTargets();
+
+                if (PlayerCamera.GetInstance.NearersLockOnTarget != null)
+                {
+                    player.PlayerCombatManager.SetTarget(PlayerCamera.GetInstance.NearersLockOnTarget);
+                    player.PlayerNetworkManager.IsLockedOn.Value = true;
+                }
+            }
+        }
+    }
+
+    private void HandleLeftLockOnTargetSwitchInput()
+    {
+        if (seekLeftLockOnInput)
+        {
+            seekLeftLockOnInput = false;
+
+            if (player.PlayerNetworkManager.IsLockedOn.Value)
+            {
+                PlayerCamera.GetInstance.HandleLocatingLockOnTargets();
+
+                if (PlayerCamera.GetInstance.LeftLockOnTarget != null)
+                {
+                    player.PlayerCombatManager.SetTarget(PlayerCamera.GetInstance.LeftLockOnTarget);
+                }
+            }
+        }
+    }
+
+    private void HandleRightLockOnTargetSwitchInput()
+    {
+        if (seekRightLockOnInput)
+        {
+            seekRightLockOnInput = false;
+
+            if (player.PlayerNetworkManager.IsLockedOn.Value)
+            {
+                PlayerCamera.GetInstance.HandleLocatingLockOnTargets();
+
+                if (PlayerCamera.GetInstance.RightLockOnTarget != null)
+                {
+                    player.PlayerCombatManager.SetTarget(PlayerCamera.GetInstance.RightLockOnTarget);
+                }
+            }
         }
     }
 }
