@@ -80,115 +80,115 @@ public class PlayerManager : CharacterManager
         base.Start();
     }
 
-    private void OnClientConnectedCallback(ulong clientID)
-    {
-        WorldGameSessionManager.GetInstance.AddPlayerToActivePlayerList(this);
+    // private void OnClientConnectedCallback(ulong clientID)
+    // {
+    //     WorldGameSessionManager.GetInstance.AddPlayerToActivePlayerList(this);
 
-        // the server is the host, and the host loads the proxies first =>
-        // the clients are the one who need to "catch up" with the host
-        if (!IsServer && IsOwner)
-        {
-            foreach (var player in WorldGameSessionManager.GetInstance.PlayersList)
-            {
-                if (player != this)
-                {
-                    player.LoadPlayerCharacterOnJoin();
-                }
-            }
-        }
-    }
+    //     // the server is the host, and the host loads the proxies first =>
+    //     // the clients are the one who need to "catch up" with the host
+    //     if (!IsServer && IsOwner)
+    //     {
+    //         foreach (var player in WorldGameSessionManager.GetInstance.PlayersList)
+    //         {
+    //             if (player != this)
+    //             {
+    //                 player.LoadPlayerCharacterOnJoin();
+    //             }
+    //         }
+    //     }
+    // }
 
-    private void LoadPlayerCharacterOnJoin()
-    {
-        playerNetworkManager.OnCurrentMainHandWeaponIDChange(0, playerNetworkManager.CurrentMainHandWeaponID.Value); 
-        playerNetworkManager.OnCurrentOffHandWeaponIDChange(0, playerNetworkManager.CurrentOffHandWeaponID.Value); 
+    // private void LoadPlayerCharacterOnJoin()
+    // {
+    //     playerNetworkManager.OnCurrentMainHandWeaponIDChange(0, playerNetworkManager.CurrentMainHandWeaponID.Value); 
+    //     playerNetworkManager.OnCurrentOffHandWeaponIDChange(0, playerNetworkManager.CurrentOffHandWeaponID.Value); 
 
-        if (playerNetworkManager.IsLockedOn.Value)
-        {
-            playerNetworkManager.OnLockOnTargetIDChange(0, playerNetworkManager.CurrentTargetNetworkObjectID.Value);
-        }
-    }
+    //     if (playerNetworkManager.IsLockedOn.Value)
+    //     {
+    //         playerNetworkManager.OnLockOnTargetIDChange(0, playerNetworkManager.CurrentTargetNetworkObjectID.Value);
+    //     }
+    // }
 
-    public override void OnNetworkSpawn()
-    {
-        base.OnNetworkSpawn();
-        NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnectedCallback;
+    // public override void OnNetworkSpawn()
+    // {
+    //     base.OnNetworkSpawn();
+    //     NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnectedCallback;
 
-        if (IsOwner)
-        {
-            PlayerCamera.GetInstance.SetPlayer(this);
-            PlayerInputManager.GetInstance.SetPlayer(this);
-            WorldSaveGameManager.GetInstance.SetPlayer(this);
+    //     if (IsOwner)
+    //     {
+    //         PlayerCamera.GetInstance.SetPlayer(this);
+    //         PlayerInputManager.GetInstance.SetPlayer(this);
+    //         WorldSaveGameManager.GetInstance.SetPlayer(this);
 
-            // UPDATE THE MAX BAR AMOUNT WHEN THE CORESPONDING STAT CHANGES
-            Vitality.OnValueChanged += SetNewMaxHealthValue;
-            Endurance.OnValueChanged += SetNewMaxStaminaValue;
+    //         // UPDATE THE MAX BAR AMOUNT WHEN THE CORESPONDING STAT CHANGES
+    //         Vitality.OnValueChanged += SetNewMaxHealthValue;
+    //         Endurance.OnValueChanged += SetNewMaxStaminaValue;
 
-            // UPDATES UI STAT BARS WHEN A STAT CHANGES
-            CurrentHealth.OnValueChanged += PlayerUIManager.GetInstance.PlayerUIHudManager.SetNewHealthValue;
-            CurrentStamina.OnValueChanged += PlayerUIManager.GetInstance.PlayerUIHudManager.SetNewStaminaValue;
-            CurrentStamina.OnValueChanged += playerStatsManager.ResetStaminaRegenTimer;
-        }
+    //         // UPDATES UI STAT BARS WHEN A STAT CHANGES
+    //         CurrentHealth.OnValueChanged += PlayerUIManager.GetInstance.PlayerUIHudManager.SetNewHealthValue;
+    //         CurrentStamina.OnValueChanged += PlayerUIManager.GetInstance.PlayerUIHudManager.SetNewStaminaValue;
+    //         CurrentStamina.OnValueChanged += playerStatsManager.ResetStaminaRegenTimer;
+    //     }
 
-        // STATS
-        CurrentHealth.OnValueChanged += playerNetworkManager.CheckHP;
+    //     // STATS
+    //     CurrentHealth.OnValueChanged += playerNetworkManager.CheckHP;
 
-        // EQUIPMENT
-        playerNetworkManager.CurrentMainHandWeaponID.OnValueChanged += playerNetworkManager.OnCurrentMainHandWeaponIDChange;
-        playerNetworkManager.CurrentOffHandWeaponID.OnValueChanged += playerNetworkManager.OnCurrentOffHandWeaponIDChange;
-        playerNetworkManager.WeaponInUseID.OnValueChanged += playerNetworkManager.OnWeaponInUseIDChange;
+    //     // EQUIPMENT
+    //     playerNetworkManager.CurrentMainHandWeaponID.OnValueChanged += playerNetworkManager.OnCurrentMainHandWeaponIDChange;
+    //     playerNetworkManager.CurrentOffHandWeaponID.OnValueChanged += playerNetworkManager.OnCurrentOffHandWeaponIDChange;
+    //     playerNetworkManager.WeaponInUseID.OnValueChanged += playerNetworkManager.OnWeaponInUseIDChange;
 
-        // LOCK ON
-        playerNetworkManager.IsLockedOn.OnValueChanged += playerNetworkManager.OnIsLockedOnChange;
-        playerNetworkManager.CurrentTargetNetworkObjectID.OnValueChanged += playerNetworkManager.OnLockOnTargetIDChange;
+    //     // LOCK ON
+    //     playerNetworkManager.IsLockedOn.OnValueChanged += playerNetworkManager.OnIsLockedOnChange;
+    //     playerNetworkManager.CurrentTargetNetworkObjectID.OnValueChanged += playerNetworkManager.OnLockOnTargetIDChange;
 
-        // FLAGS
-        playerNetworkManager.IsChargingAttack.OnValueChanged += playerNetworkManager.OnIsChargingAttackChange;
+    //     // FLAGS
+    //     playerNetworkManager.IsChargingAttack.OnValueChanged += playerNetworkManager.OnIsChargingAttackChange;
 
-        if (IsOwner && !IsServer)
-        {
-            LoadCharacterSaveData(WorldSaveGameManager.GetInstance.GetCurrentCharacterSave());
-        }
-    }
+    //     if (IsOwner && !IsServer)
+    //     {
+    //         LoadCharacterSaveData(WorldSaveGameManager.GetInstance.GetCurrentCharacterSave());
+    //     }
+    // }
 
-    public override void OnNetworkDespawn()
-    {
-        base.OnNetworkDespawn();
+    // public override void OnNetworkDespawn()
+    // {
+    //     base.OnNetworkDespawn();
 
-        NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnectedCallback;
+    //     NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnectedCallback;
 
-        if (IsOwner)
-        {
-            // UPDATE THE MAX BAR AMOUNT WHEN THE CORESPONDING STAT CHANGES
-            Vitality.OnValueChanged -= SetNewMaxHealthValue;
-            Endurance.OnValueChanged -= SetNewMaxStaminaValue;
+    //     if (IsOwner)
+    //     {
+    //         // UPDATE THE MAX BAR AMOUNT WHEN THE CORESPONDING STAT CHANGES
+    //         Vitality.OnValueChanged -= SetNewMaxHealthValue;
+    //         Endurance.OnValueChanged -= SetNewMaxStaminaValue;
 
-            // UPDATES UI STAT BARS WHEN A STAT CHANGES
-            CurrentHealth.OnValueChanged -= PlayerUIManager.GetInstance.PlayerUIHudManager.SetNewHealthValue;
-            CurrentStamina.OnValueChanged -= PlayerUIManager.GetInstance.PlayerUIHudManager.SetNewStaminaValue;
-            CurrentStamina.OnValueChanged -= playerStatsManager.ResetStaminaRegenTimer;
-        }
+    //         // UPDATES UI STAT BARS WHEN A STAT CHANGES
+    //         CurrentHealth.OnValueChanged -= PlayerUIManager.GetInstance.PlayerUIHudManager.SetNewHealthValue;
+    //         CurrentStamina.OnValueChanged -= PlayerUIManager.GetInstance.PlayerUIHudManager.SetNewStaminaValue;
+    //         CurrentStamina.OnValueChanged -= playerStatsManager.ResetStaminaRegenTimer;
+    //     }
 
-        // STATS
-        CurrentHealth.OnValueChanged -= playerNetworkManager.CheckHP;
+    //     // STATS
+    //     CurrentHealth.OnValueChanged -= playerNetworkManager.CheckHP;
 
-        // EQUIPMENT
-        playerNetworkManager.CurrentMainHandWeaponID.OnValueChanged -= playerNetworkManager.OnCurrentMainHandWeaponIDChange;
-        playerNetworkManager.CurrentOffHandWeaponID.OnValueChanged -= playerNetworkManager.OnCurrentOffHandWeaponIDChange;
-        playerNetworkManager.WeaponInUseID.OnValueChanged -= playerNetworkManager.OnWeaponInUseIDChange;
+    //     // EQUIPMENT
+    //     playerNetworkManager.CurrentMainHandWeaponID.OnValueChanged -= playerNetworkManager.OnCurrentMainHandWeaponIDChange;
+    //     playerNetworkManager.CurrentOffHandWeaponID.OnValueChanged -= playerNetworkManager.OnCurrentOffHandWeaponIDChange;
+    //     playerNetworkManager.WeaponInUseID.OnValueChanged -= playerNetworkManager.OnWeaponInUseIDChange;
 
-        // LOCK ON
-        playerNetworkManager.IsLockedOn.OnValueChanged -= playerNetworkManager.OnIsLockedOnChange;
-        playerNetworkManager.CurrentTargetNetworkObjectID.OnValueChanged -= playerNetworkManager.OnLockOnTargetIDChange;
+    //     // LOCK ON
+    //     playerNetworkManager.IsLockedOn.OnValueChanged -= playerNetworkManager.OnIsLockedOnChange;
+    //     playerNetworkManager.CurrentTargetNetworkObjectID.OnValueChanged -= playerNetworkManager.OnLockOnTargetIDChange;
 
-        // FLAGS
-        playerNetworkManager.IsChargingAttack.OnValueChanged -= playerNetworkManager.OnIsChargingAttackChange;
+    //     // FLAGS
+    //     playerNetworkManager.IsChargingAttack.OnValueChanged -= playerNetworkManager.OnIsChargingAttackChange;
 
-        if (IsOwner && !IsServer)
-        {
-            LoadCharacterSaveData(WorldSaveGameManager.GetInstance.GetCurrentCharacterSave());
-        }
-    }
+    //     if (IsOwner && !IsServer)
+    //     {
+    //         LoadCharacterSaveData(WorldSaveGameManager.GetInstance.GetCurrentCharacterSave());
+    //     }
+    // }
 
     protected override void LateUpdate()
     {
@@ -254,19 +254,19 @@ public class PlayerManager : CharacterManager
         CurrentStamina.Value = characterSaveData.CurrentStamina;
     }
 
-    public void SetNewMaxHealthValue(int oldValue, int newValue)
-    {
-        MaxHealth.Value = CharacterStatsManager.CalculateHealthBasedOnVitalityLevel(newValue);
-        PlayerUIManager.GetInstance.PlayerUIHudManager.SetMaxHealthValue(MaxHealth.Value);
-        CurrentHealth.Value = MaxHealth.Value;
-    }
+    // public void SetNewMaxHealthValue(int oldValue, int newValue)
+    // {
+    //     MaxHealth.Value = CharacterStatsManager.CalculateHealthBasedOnVitalityLevel(newValue);
+    //     PlayerUIManager.GetInstance.PlayerUIHudManager.SetMaxHealthValue(MaxHealth.Value);
+    //     CurrentHealth.Value = MaxHealth.Value;
+    // }
 
-    public void SetNewMaxStaminaValue(int oldValue, int newValue)
-    {
-        MaxStamina.Value = CharacterStatsManager.CalculateStaminaBasedOnEnduranceLevel(newValue);
-        PlayerUIManager.GetInstance.PlayerUIHudManager.SetMaxStaminaValue(MaxStamina.Value);
-        CurrentStamina.Value = MaxStamina.Value;
-    }
+    // public void SetNewMaxStaminaValue(int oldValue, int newValue)
+    // {
+    //     MaxStamina.Value = CharacterStatsManager.CalculateStaminaBasedOnEnduranceLevel(newValue);
+    //     PlayerUIManager.GetInstance.PlayerUIHudManager.SetMaxStaminaValue(MaxStamina.Value);
+    //     CurrentStamina.Value = MaxStamina.Value;
+    // }
 
     // DELETE LATER
     private void DebugMenu()

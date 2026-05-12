@@ -19,7 +19,7 @@ public class CharacterNetworkManager : NetworkBehaviour
 
     [Header("Rotation")]
     protected NetworkVariable<Quaternion> networkRotation = new (Quaternion.identity, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-    protected NetworkVariable<ulong> currentTargetNetworkObjectID = new (0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    [SerializeField] protected NetworkVariable<ulong> currentTargetNetworkObjectID = new (0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
     [Header("Animator")]
     protected NetworkVariable<float> verticalMovement = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);

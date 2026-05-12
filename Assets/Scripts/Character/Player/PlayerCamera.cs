@@ -187,12 +187,14 @@ public class PlayerCamera : MonoBehaviour
                                                                             
         for (int i = 0; i < colliders.Length; i++)
         {
-            CharacterManager lockOnTarget = colliders[i].GetComponent<CharacterManager>();
+                                                        //Debug.Log("Found Collider: " + colliders[i].name + " on Layer: " + LayerMask.LayerToName(colliders[i].gameObject.layer));
+            CharacterManager lockOnTarget = colliders[i].GetComponentInParent<CharacterManager>();
+
             if (lockOnTarget != null)
             {
                 // CHECH IF WITHIN FIELD OF VIEW
                 Vector3 lockOnTargetDirection = lockOnTarget.transform.position - player.transform.position;
-                float distanceFromTarget = Vector3.Distance(player.transform.position, lockOnTarget.transform.position);
+                //float distanceFromTarget = Vector3.Distance(player.transform.position, lockOnTarget.transform.position);
                 float viewableAngle = Vector3.Angle(lockOnTargetDirection, cameraObject.transform.forward);
 
                 if (lockOnTarget == player)

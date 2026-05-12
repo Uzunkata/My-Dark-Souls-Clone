@@ -155,7 +155,7 @@ public class PlayerEquipmentManager : CharacterEquipmentManager
         // TODO: PLAY WEAPON SWING SOUND FX
     }
 
-        public void DisableDamageColliders()
+    public void DisableDamageColliders()
     {
         if (player.PlayerNetworkManager.IsUsingOffHand.Value)
         {

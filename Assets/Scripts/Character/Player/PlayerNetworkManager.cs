@@ -1,11 +1,14 @@
 using UnityEngine;
 using Unity.Netcode;
 using Unity.Collections;
-
 [RequireComponent(typeof(PlayerManager))]
+
+[RequireComponent(typeof(PlayerStatsManager))]
 public class PlayerNetworkManager : CharacterNetworkManager
 {
     private PlayerManager player;
+    private PlayerStatsManager playerStatsManager;
+
     private NetworkVariable<FixedString64Bytes> characterName = new("Character", NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
     [Header("Equipemnt")]
@@ -32,8 +35,132 @@ public class PlayerNetworkManager : CharacterNetworkManager
     {
         base.Awake();
         player = GetComponent<PlayerManager>();
+        playerStatsManager = GetComponent<PlayerStatsManager>();
     }
 
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+        NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnectedCallback;
+
+        if (IsOwner)
+        {
+            PlayerCamera.GetInstance.SetPlayer(player);
+            PlayerInputManager.GetInstance.SetPlayer(player);
+            WorldSaveGameManager.GetInstance.SetPlayer(player);
+
+            // UPDATE THE MAX BAR AMOUNT WHEN THE CORESPONDING STAT CHANGES
+            Vitality.OnValueChanged += SetNewMaxHealthValue;
+            Endurance.OnValueChanged += SetNewMaxStaminaValue;
+
+            // UPDATES UI STAT BARS WHEN A STAT CHANGES
+            CurrentHealth.OnValueChanged += PlayerUIManager.GetInstance.PlayerUIHudManager.SetNewHealthValue;
+            CurrentStamina.OnValueChanged += PlayerUIManager.GetInstance.PlayerUIHudManager.SetNewStaminaValue;
+            CurrentStamina.OnValueChanged += playerStatsManager.ResetStaminaRegenTimer;
+        }
+
+        // STATS
+        CurrentHealth.OnValueChanged += CheckHP;
+
+        // EQUIPMENT
+        CurrentMainHandWeaponID.OnValueChanged += OnCurrentMainHandWeaponIDChange;
+        CurrentOffHandWeaponID.OnValueChanged += OnCurrentOffHandWeaponIDChange;
+        WeaponInUseID.OnValueChanged += OnWeaponInUseIDChange;
+
+        // LOCK ON
+        IsLockedOn.OnValueChanged += OnIsLockedOnChange;
+        CurrentTargetNetworkObjectID.OnValueChanged += OnLockOnTargetIDChange;
+
+        // FLAGS
+        IsChargingAttack.OnValueChanged += OnIsChargingAttackChange;
+
+        if (IsOwner && !IsServer)
+        {
+            player.LoadCharacterSaveData(WorldSaveGameManager.GetInstance.GetCurrentCharacterSave());
+        }
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        base.OnNetworkDespawn();
+
+        NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnectedCallback;
+
+        if (IsOwner)
+        {
+            // UPDATE THE MAX BAR AMOUNT WHEN THE CORESPONDING STAT CHANGES
+            Vitality.OnValueChanged -= SetNewMaxHealthValue;
+            Endurance.OnValueChanged -= SetNewMaxStaminaValue;
+
+            // UPDATES UI STAT BARS WHEN A STAT CHANGES
+            CurrentHealth.OnValueChanged -= PlayerUIManager.GetInstance.PlayerUIHudManager.SetNewHealthValue;
+            CurrentStamina.OnValueChanged -= PlayerUIManager.GetInstance.PlayerUIHudManager.SetNewStaminaValue;
+            CurrentStamina.OnValueChanged -= playerStatsManager.ResetStaminaRegenTimer;
+        }
+
+        // STATS
+        CurrentHealth.OnValueChanged -= CheckHP;
+
+        // EQUIPMENT
+        CurrentMainHandWeaponID.OnValueChanged -= OnCurrentMainHandWeaponIDChange;
+        CurrentOffHandWeaponID.OnValueChanged -= OnCurrentOffHandWeaponIDChange;
+        WeaponInUseID.OnValueChanged -= OnWeaponInUseIDChange;
+
+        // LOCK ON
+        IsLockedOn.OnValueChanged -= OnIsLockedOnChange;
+        CurrentTargetNetworkObjectID.OnValueChanged -= OnLockOnTargetIDChange;
+
+        // FLAGS
+        IsChargingAttack.OnValueChanged -= OnIsChargingAttackChange;
+
+        if (IsOwner && !IsServer)
+        {
+            player.LoadCharacterSaveData(WorldSaveGameManager.GetInstance.GetCurrentCharacterSave());
+        }
+    }
+
+    private void OnClientConnectedCallback(ulong clientID)
+    {
+        WorldGameSessionManager.GetInstance.AddPlayerToActivePlayerList(player);
+
+        // the server is the host, and the host loads the proxies first =>
+        // the clients are the one who need to "catch up" with the host
+        if (!IsServer && IsOwner)
+        {
+            foreach (var player in WorldGameSessionManager.GetInstance.PlayersList)
+            {
+                if (player != this)
+                {
+                    LoadPlayerCharacterOnJoin();
+                }
+            }
+        }
+    }
+
+    private void LoadPlayerCharacterOnJoin()
+    {
+        OnCurrentMainHandWeaponIDChange(0, CurrentMainHandWeaponID.Value); 
+        OnCurrentOffHandWeaponIDChange(0, CurrentOffHandWeaponID.Value); 
+
+        if (IsLockedOn.Value)
+        {
+            OnLockOnTargetIDChange(0, CurrentTargetNetworkObjectID.Value);
+        }
+    }
+
+    public void SetNewMaxHealthValue(int oldValue, int newValue)
+    {
+        MaxHealth.Value = CharacterStatsManager.CalculateHealthBasedOnVitalityLevel(newValue);
+        PlayerUIManager.GetInstance.PlayerUIHudManager.SetMaxHealthValue(MaxHealth.Value);
+        CurrentHealth.Value = MaxHealth.Value;
+    }
+
+    public void SetNewMaxStaminaValue(int oldValue, int newValue)
+    {
+        MaxStamina.Value = CharacterStatsManager.CalculateStaminaBasedOnEnduranceLevel(newValue);
+        PlayerUIManager.GetInstance.PlayerUIHudManager.SetMaxStaminaValue(MaxStamina.Value);
+        CurrentStamina.Value = MaxStamina.Value;
+    }
     public void OnCurrentMainHandWeaponIDChange(int oldID, int newID)
     {
         WeaponItem newWeapon = Instantiate(WorldItemDatabase.GetInstance.GetWeaponByID(newID));
