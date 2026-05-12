@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Pink Straight Sword
   m_EditorClassIdentifier: Assembly-CSharp::MeleeWeaponItem
   itemName: Ping Straight Sword
-  itemIcon: {fileID: 0}
+  itemIcon: {fileID: 21300000, guid: 5b5aa8f54c2616340a3663cd407e31c2, type: 3}
   itemDescription: Straight Sword
   itemID: 2
   weaponModel: {fileID: 3494084672845283978, guid: cd86d2de4e814594880f3db2bf9fe3c6, type: 3}
@@ -28,8 +28,12 @@ MonoBehaviour:
     lightningDamage: 0
     holyDamage: 0
     poiseDamage: 0
-  lightAttackDamageModifier: 1.1
+  lightAttack_01_DamageModifier: 1.1
+  heavyAttack_01_DamageModifier: 1.5
+  chargedHeavyAttack_01_DamageModifier: 2
   poiseDamage: 10
   baseStaminaCost: 20
   lightAttackStaminaMulpiplier: 0.9
+  heavyAttackStaminaMulpiplier: 1.2
   lightAttack_OneHanded: {fileID: 11400000, guid: 9f08292e393a9064b8087d1fbe673232, type: 2}
+  heavyAttack_OneHanded: {fileID: 11400000, guid: 84102fee31d8418468495e679eae0d36, type: 2}

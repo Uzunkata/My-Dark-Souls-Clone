@@ -325,6 +325,33 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Switch Main Hand Weapon"",
+                    ""type"": ""Button"",
+                    ""id"": ""7fe425af-58f0-494f-acc9-56d69a8399f9"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Switch Off Hand Weapon"",
+                    ""type"": ""Button"",
+                    ""id"": ""3e055a1e-b1f2-4f12-b0c4-38051c0d06b6"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Shift Modifier"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""e18485c0-3cf9-455b-9271-3e79bed7b710"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Hold(pressPoint=0.1)"",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -492,6 +519,61 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""Heavy Main Charged Attack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""77b1048d-a5f0-4892-9a82-9f146859caa3"",
+                    ""path"": ""<Mouse>/scroll/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Switch Main Hand Weapon"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""One Modifier"",
+                    ""id"": ""7ac1e689-ad89-4d1d-b49a-aec7951c78cf"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Switch Off Hand Weapon"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""754f6d4b-7ace-45bb-b1a4-2ed849797984"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Switch Off Hand Weapon"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""89d2925b-2f7c-41b1-a0e0-752a93345eb4"",
+                    ""path"": ""<Mouse>/scroll/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Switch Off Hand Weapon"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4e6503e3-e95e-4d20-b7ef-8aa8dc5a3b5e"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Shift Modifier"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -555,6 +637,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_PlayerActions_LockOn = m_PlayerActions.FindAction("LockOn", throwIfNotFound: true);
         m_PlayerActions_SeekLeftLockOnTarget = m_PlayerActions.FindAction("Seek Left Lock On Target", throwIfNotFound: true);
         m_PlayerActions_SeekRightLockOnTarget = m_PlayerActions.FindAction("Seek Right Lock On Target", throwIfNotFound: true);
+        m_PlayerActions_SwitchMainHandWeapon = m_PlayerActions.FindAction("Switch Main Hand Weapon", throwIfNotFound: true);
+        m_PlayerActions_SwitchOffHandWeapon = m_PlayerActions.FindAction("Switch Off Hand Weapon", throwIfNotFound: true);
+        m_PlayerActions_ShiftModifier = m_PlayerActions.FindAction("Shift Modifier", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_DeleteSave = m_UI.FindAction("Delete Save", throwIfNotFound: true);
@@ -843,6 +928,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerActions_LockOn;
     private readonly InputAction m_PlayerActions_SeekLeftLockOnTarget;
     private readonly InputAction m_PlayerActions_SeekRightLockOnTarget;
+    private readonly InputAction m_PlayerActions_SwitchMainHandWeapon;
+    private readonly InputAction m_PlayerActions_SwitchOffHandWeapon;
+    private readonly InputAction m_PlayerActions_ShiftModifier;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player Actions".
     /// </summary>
@@ -894,6 +982,18 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "PlayerActions/SeekRightLockOnTarget".
         /// </summary>
         public InputAction @SeekRightLockOnTarget => m_Wrapper.m_PlayerActions_SeekRightLockOnTarget;
+        /// <summary>
+        /// Provides access to the underlying input action "PlayerActions/SwitchMainHandWeapon".
+        /// </summary>
+        public InputAction @SwitchMainHandWeapon => m_Wrapper.m_PlayerActions_SwitchMainHandWeapon;
+        /// <summary>
+        /// Provides access to the underlying input action "PlayerActions/SwitchOffHandWeapon".
+        /// </summary>
+        public InputAction @SwitchOffHandWeapon => m_Wrapper.m_PlayerActions_SwitchOffHandWeapon;
+        /// <summary>
+        /// Provides access to the underlying input action "PlayerActions/ShiftModifier".
+        /// </summary>
+        public InputAction @ShiftModifier => m_Wrapper.m_PlayerActions_ShiftModifier;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -950,6 +1050,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @SeekRightLockOnTarget.started += instance.OnSeekRightLockOnTarget;
             @SeekRightLockOnTarget.performed += instance.OnSeekRightLockOnTarget;
             @SeekRightLockOnTarget.canceled += instance.OnSeekRightLockOnTarget;
+            @SwitchMainHandWeapon.started += instance.OnSwitchMainHandWeapon;
+            @SwitchMainHandWeapon.performed += instance.OnSwitchMainHandWeapon;
+            @SwitchMainHandWeapon.canceled += instance.OnSwitchMainHandWeapon;
+            @SwitchOffHandWeapon.started += instance.OnSwitchOffHandWeapon;
+            @SwitchOffHandWeapon.performed += instance.OnSwitchOffHandWeapon;
+            @SwitchOffHandWeapon.canceled += instance.OnSwitchOffHandWeapon;
+            @ShiftModifier.started += instance.OnShiftModifier;
+            @ShiftModifier.performed += instance.OnShiftModifier;
+            @ShiftModifier.canceled += instance.OnShiftModifier;
         }
 
         /// <summary>
@@ -991,6 +1100,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @SeekRightLockOnTarget.started -= instance.OnSeekRightLockOnTarget;
             @SeekRightLockOnTarget.performed -= instance.OnSeekRightLockOnTarget;
             @SeekRightLockOnTarget.canceled -= instance.OnSeekRightLockOnTarget;
+            @SwitchMainHandWeapon.started -= instance.OnSwitchMainHandWeapon;
+            @SwitchMainHandWeapon.performed -= instance.OnSwitchMainHandWeapon;
+            @SwitchMainHandWeapon.canceled -= instance.OnSwitchMainHandWeapon;
+            @SwitchOffHandWeapon.started -= instance.OnSwitchOffHandWeapon;
+            @SwitchOffHandWeapon.performed -= instance.OnSwitchOffHandWeapon;
+            @SwitchOffHandWeapon.canceled -= instance.OnSwitchOffHandWeapon;
+            @ShiftModifier.started -= instance.OnShiftModifier;
+            @ShiftModifier.performed -= instance.OnShiftModifier;
+            @ShiftModifier.canceled -= instance.OnShiftModifier;
         }
 
         /// <summary>
@@ -1227,6 +1345,27 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSeekRightLockOnTarget(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Switch Main Hand Weapon" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSwitchMainHandWeapon(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Switch Off Hand Weapon" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSwitchOffHandWeapon(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Shift Modifier" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnShiftModifier(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

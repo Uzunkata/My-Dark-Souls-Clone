@@ -51,8 +51,11 @@ public class PlayerCombatManager : CharacterCombatManager
 
         switch(CurrentAttackType)
         {
-            case WeaponItemAction.AttackType.LightAttack01:
+            case WeaponItemAction.AttackType.LightAttack_OneHand_01:
                 staminaDeducted = weaponInUse.BaseStaminaCost * weaponInUse.LightAttackStaminaModifier;
+                break;
+            case WeaponItemAction.AttackType.HeavyAttack_OneHanded_01:
+                staminaDeducted = weaponInUse.BaseStaminaCost * weaponInUse.HeavyAttackStaminaMulpiplier;
                 break;
             default:
                 break;

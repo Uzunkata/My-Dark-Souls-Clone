@@ -6,18 +6,34 @@ public class MeleeWeaponDamageCollider : DamageCollider
     [SerializeField] private CharacterManager characterCausingDMG;
 
     [Header("Weapon Attack Modifiers")]
-    [SerializeField] private float lightAttackDamageModifier;
+    [SerializeField] private float lightAttack_01_DamageModifier;
+    [SerializeField] private float heavyAttack_01_DamageModifier;
+    [SerializeField] private float chargedHeavyAttack_01_DamageModifier;
+
+    #region ENCAPSULATION
 
     public CharacterManager CharacterCausingDMG
     {
         get => characterCausingDMG;
         set => characterCausingDMG = value;
     }
-    public float LightAttackDamageModifier
+    public float LightAttack_01_DamageModifier
     {
-        get => lightAttackDamageModifier;
-        set => lightAttackDamageModifier = value;
+        get => lightAttack_01_DamageModifier;
+        set => lightAttack_01_DamageModifier = value;
     }
+    public float HeavyAttack_01_DamageModifier
+    {
+        get => heavyAttack_01_DamageModifier;
+        set => heavyAttack_01_DamageModifier = value;
+    }
+    public float ChargedHeavyAttack_01_DamageModifier
+    {
+        get => chargedHeavyAttack_01_DamageModifier;
+        set => chargedHeavyAttack_01_DamageModifier = value;
+    }
+
+    #endregion
 
     protected override void Awake()
     {
@@ -60,8 +76,14 @@ public class MeleeWeaponDamageCollider : DamageCollider
 
         switch(characterCausingDMG.CharacterCombatManager.CurrentAttackType)
         {
-            case WeaponItemAction.AttackType.LightAttack01:
-                ApplyAttackDamageModifiers(lightAttackDamageModifier, damageEffect);
+            case WeaponItemAction.AttackType.LightAttack_OneHand_01:
+                ApplyAttackDamageModifiers(lightAttack_01_DamageModifier, damageEffect);
+                break;
+            case WeaponItemAction.AttackType.HeavyAttack_OneHanded_01:
+                ApplyAttackDamageModifiers(heavyAttack_01_DamageModifier, damageEffect);
+                break;
+                case WeaponItemAction.AttackType.ChargedHeavyAttack_OneHanded_01:
+                ApplyAttackDamageModifiers(chargedHeavyAttack_01_DamageModifier, damageEffect);
                 break;
             default:
                 break;

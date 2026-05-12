@@ -24,7 +24,9 @@ public class WeaponItem : Item
     [SerializeField] private Damage damage;
 
     [Header("Attack Modifier")]
-    [SerializeField] private float lightAttackDamageModifier = 1.1f;
+    [SerializeField] private float lightAttack_01_DamageModifier = 1.1f;
+    [SerializeField] private float heavyAttack_01_DamageModifier = 1.5f;
+    [SerializeField] private float chargedHeavyAttack_01_DamageModifier = 2f;
 
 
     [Header("Weapon Poise Damage")]
@@ -33,9 +35,11 @@ public class WeaponItem : Item
     [Header("Weapon Stamina Cost")]
     [SerializeField] private int baseStaminaCost = 20;
     [SerializeField] private float lightAttackStaminaMulpiplier = 0.9f;
+    [SerializeField] private float heavyAttackStaminaMulpiplier = 1.2f;
 
     [Header("Weapon Actions")]
     [SerializeField] private WeaponItemAction lightAttack_OneHanded;
+    [SerializeField] private WeaponItemAction heavyAttack_OneHanded;
 
     // TODO:
     // RUNNING/HEAVY ATTACK STAMINA COST
@@ -87,26 +91,19 @@ public class WeaponItem : Item
         get => baseStaminaCost;
         set => baseStaminaCost = value;
     }
-    public float LightAttackStaminaModifier
-    {
-        get => lightAttackStaminaMulpiplier;
-        set => lightAttackStaminaMulpiplier = value;
-    }
+    public float LightAttackStaminaModifier => lightAttackStaminaMulpiplier;
+    public float HeavyAttackStaminaMulpiplier => heavyAttackStaminaMulpiplier;
+
     public float PoiseDamage
     {
         get => poiseDamage;
         set => poiseDamage = value;
     }
-    public WeaponItemAction LightAttack_OneHanded
-    {
-        get => lightAttack_OneHanded;
-        set => lightAttack_OneHanded = value;
-    }
-    public float LightAttackDamageModifier
-    {
-        get => lightAttackDamageModifier;
-        set => lightAttackDamageModifier = value;  
-    }
+    public WeaponItemAction LightAttack_OneHanded => lightAttack_OneHanded;
+    public WeaponItemAction HeavyAttack_OneHanded => heavyAttack_OneHanded;
+    public float LightAttack_01_DamageModifier => lightAttack_01_DamageModifier;
+    public float HeavyAttack_01_DamageModifier => heavyAttack_01_DamageModifier;
+    public float ChargedHeavyAttack_01_DamageModifier => chargedHeavyAttack_01_DamageModifier;
 
     #endregion
 }

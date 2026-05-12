@@ -216,6 +216,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCamera
   cameraObject: {fileID: 6171410264884582652}
   cameraPivotTransform: {fileID: 2525053661228860405}
+  cameraFollowSmoothSpeed: 0
   upAndDownRotationSpeed: 220
   leftAndRightRotationSpeed: 220
   minimumPivot: -30
@@ -226,3 +227,10 @@ MonoBehaviour:
     m_Bits: 1
   leftAndRightLookAngle: 0
   upAndDownLookAngle: 0
+  lockOnRadius: 20
+  minimumViewableAngle: -50
+  maximumViewableAngle: 50
+  cameraLockOnHeightSpeed: 1
+  lockOnTargetFollowSpeed: 1
+  unlockedCameraHeight: 1.65
+  lockedCameraHeight: 2

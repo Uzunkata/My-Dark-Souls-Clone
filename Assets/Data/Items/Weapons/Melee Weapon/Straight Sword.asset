@@ -33,3 +33,4 @@ MonoBehaviour:
   baseStaminaCost: 20
   lightAttackStaminaMulpiplier: 0.9
   lightAttack_OneHanded: {fileID: 11400000, guid: 9f08292e393a9064b8087d1fbe673232, type: 2}
+  heavyAttack_OneHanded: {fileID: 11400000, guid: 84102fee31d8418468495e679eae0d36, type: 2}

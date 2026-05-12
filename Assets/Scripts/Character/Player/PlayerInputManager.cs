@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class PlayerInputManager : MonoBehaviour
@@ -38,7 +39,15 @@ public class PlayerInputManager : MonoBehaviour
     [SerializeField] private bool dodgeInput = false;
     [SerializeField] private bool sprintInput = false;
     [SerializeField] private bool jumpInput = false;
+    [SerializeField] private bool switchMainHandWeaponInput = false;
+    [SerializeField] private bool switchOffHandWeaponInput = false;
+    //[SerializeField] private bool shiftModifierInput = false;
+
+
+    [Header("Player Attack Action Input")]
     [SerializeField] private bool mainHand_LightAttackInput = false;
+    [SerializeField] private bool mainHand_HeavyAttackInput = false;
+    [SerializeField] private bool mainHand_ChargedHeavyAttackInput = false;
     [SerializeField] private bool offHand_LightAttackInput = false;
 
     public static PlayerInputManager GetInstance
@@ -107,20 +116,44 @@ public class PlayerInputManager : MonoBehaviour
         {
             playerControls = new PlayerControls();
 
+            // MODIFIERS
+            //ShiftModifierInput = Keyboard.current.leftShiftKey.isPressed;
+            // playerControls.PlayerActions.ShiftModifier.performed += i => shiftModifierInput = true;
+            //playerControls.PlayerActions.ShiftModifier.canceled += i => ShiftModifierInput = false;
+
+            // MOVEMENT
             playerControls.PlayerMovement.Movement.performed += i => playerMovementInput = i.ReadValue<Vector2>();
             playerControls.CameraMovement.Movement.performed += i => cameraMovementInput = i.ReadValue<Vector2>();
-            playerControls.PlayerActions.Dodge.performed += i => dodgeInput = true;
-            playerControls.PlayerActions.Sprint.performed += i => sprintInput = true;
-            playerControls.PlayerActions.Sprint.canceled += i => sprintInput = false;
-            playerControls.PlayerActions.Jump.performed += i => jumpInput = true;
-            playerControls.PlayerActions.LightMainAttack.performed += i => mainHand_LightAttackInput = true;
-            playerControls.PlayerActions.LightOffAttack.performed += i => offHand_LightAttackInput = true;
-            playerControls.PlayerActions.LockOn.performed += i => lockOnInput = true;
 
+            // CAMERA
+            playerControls.PlayerActions.LockOn.performed += i => lockOnInput = true;
             playerControls.PlayerActions.SeekLeftLockOnTarget.performed += i => seekLeftLockOnInput = true;
             playerControls.PlayerActions.SeekRightLockOnTarget.performed += i => seekRightLockOnInput = true;
             //playerControls.PlayerActions.SeekLockOnTarget.performed += i => seekLockOnTargetInput = true;
             //playerControls.PlayerActions.SeekLockOnTarget.canceled += i => seekLockOnTargetInput = false;
+
+            // ACTION
+            playerControls.PlayerActions.Dodge.performed += i => dodgeInput = true;
+            playerControls.PlayerActions.Sprint.performed += i => sprintInput = true;
+            playerControls.PlayerActions.Sprint.canceled += i => sprintInput = false;
+            playerControls.PlayerActions.Jump.performed += i => jumpInput = true;
+            playerControls.PlayerActions.SwitchMainHandWeapon.performed += i =>
+            {
+                if (!Keyboard.current.leftShiftKey.isPressed)
+                    switchMainHandWeaponInput = true;
+            };
+            playerControls.PlayerActions.SwitchOffHandWeapon.performed += i => switchOffHandWeaponInput = true;
+
+            // ATTACK ACTION (MAIN HAD)
+            playerControls.PlayerActions.LightMainAttack.performed += i => mainHand_LightAttackInput = true;
+            playerControls.PlayerActions.HeavyMainHandAttack.performed += i => mainHand_HeavyAttackInput = true;
+            playerControls.PlayerActions.HeavyMainChargedAttack.performed += i => mainHand_ChargedHeavyAttackInput = true;
+            playerControls.PlayerActions.HeavyMainChargedAttack.canceled += i => mainHand_ChargedHeavyAttackInput = false;
+
+
+            // ATTACK ACTION (OFF HAD)
+            playerControls.PlayerActions.LightOffAttack.performed += i => offHand_LightAttackInput = true;
+
 
         }
 
@@ -142,20 +175,45 @@ public class PlayerInputManager : MonoBehaviour
     private void HandleAllInputs()
     {
         // MOVEMENT:
-        HandeCameraMovementInput();
         HandlePlayerMovementInput();
-        HandleDodgeInput();
-        HandleSprintInput();
-        HandleJumpInput();
-
-        // WEAPON ACTIONS
-        HandleMainHandAttackInput();
-        HandleOffHandAttackInput();
-
+        
         //  CAMERA LOCK IN
+        HandeCameraMovementInput();
         HandleLockOnInput();
         HandleLeftLockOnTargetSwitchInput();
         HandleRightLockOnTargetSwitchInput();
+
+        // ACTIONS
+        HandleDodgeInput();
+        HandleSprintInput();
+        HandleJumpInput();
+        HandleSwitchMainHandWeaponInput();
+        HandleSwitchOffHandWeaponInput();
+
+        // WEAPON ACTIONS (MAIN HAND)
+        HandleMainHandLightAttackInput();
+        HandleMainHandHeavyAttackInput();
+        HandleMainHandChargedHeavyAttackInput();
+
+        // WEAPON ACTIONS (OFF HAND)
+        HandleOffHandLightAttackInput();
+
+    }
+    
+    //if we minimize the window => stop reading inputs
+    private void OnApplicationFocus(bool focus)
+    {
+        if (enabled)
+        {
+            if (focus)
+            {
+                playerControls.Enable();
+            }
+            else
+            {
+                playerControls.Disable();
+            }
+        }
     }
 
     //  MOVEMENT
@@ -200,95 +258,39 @@ public class PlayerInputManager : MonoBehaviour
         cameraHorizontalInput = cameraMovementInput.x;
     }
 
-    //if we minimize the window => stop reading inputs
-    private void OnApplicationFocus(bool focus)
+    // CAMERA
+    private void HandleLeftLockOnTargetSwitchInput()
     {
-        if (enabled)
+        if (seekLeftLockOnInput)
         {
-            if (focus)
+            seekLeftLockOnInput = false;
+
+            if (player.PlayerNetworkManager.IsLockedOn.Value)
             {
-                playerControls.Enable();
-            }
-            else
-            {
-                playerControls.Disable();
-            }
-        }
-    }
+                PlayerCamera.GetInstance.HandleLocatingLockOnTargets();
 
-    //  ACTIONS
-    private void HandleDodgeInput()
-    {
-        if (dodgeInput)
-        {
-            dodgeInput = false;
-
-            //TODO: cant doge when a menu or ui windows is open
-            player.PlayerLocomotionManager.AttemptToPerformDodge();
-        }
-    }
-
-    private void HandleSprintInput()
-    {
-        if (sprintInput)
-        {
-            player.PlayerLocomotionManager.HandleSprinting();
-        }
-        else
-        {
-            player.IsSprinting = false;
-        }
-    }
-
-    private void HandleJumpInput()
-    {
-        if (jumpInput)
-        {
-            jumpInput = false;
-
-            // TODO: DISSABLE IF WE HAVE UI OPEN
-
-            player.PlayerLocomotionManager.AttemptToPerformJump();
-        }
-    }
-
-    private void HandleMainHandAttackInput()
-    {
-        if (mainHand_LightAttackInput)
-        {
-            mainHand_LightAttackInput = false;
-
-            // TODO: DO NOT PERFORME IF WE HAVE UI OPEN
-
-            //player.PlayerNetworkManager.SetCharacterActionHand(true);
-
-            // TODO: TWOHANDING
-                                                                                        Debug.Log("asasasas: " + player.PlayerInventoryManager.CurrentMHWeapon.ItemID);
-
-            if (player.PlayerInventoryManager.CurrentMHWeapon != null)
-            {
-                player.PlayerNetworkManager.SetCharacterActionHand(true);
-                player.PlayerCombatManager.PerformWeaponAcion(player.PlayerInventoryManager.CurrentMHWeapon, player.PlayerInventoryManager.CurrentMHWeapon.LightAttack_OneHanded);
+                if (PlayerCamera.GetInstance.LeftLockOnTarget != null)
+                {
+                    player.PlayerCombatManager.SetTarget(PlayerCamera.GetInstance.LeftLockOnTarget);
+                }
             }
         }
     }
 
-    private void HandleOffHandAttackInput()
+    private void HandleRightLockOnTargetSwitchInput()
     {
-        if (offHand_LightAttackInput)
+        if (seekRightLockOnInput)
         {
-            offHand_LightAttackInput = false;
+            seekRightLockOnInput = false;
 
-            // TODO: DO NOT PERFORME IF WE HAVE UI OPEN
-
-            //player.PlayerNetworkManager.SetCharacterActionHand(false);
-
-            // TODO: TWOHANDING
-
-            if (player.PlayerInventoryManager.CurrentOHWeapon != null)
+            if (player.PlayerNetworkManager.IsLockedOn.Value)
             {
-                player.PlayerNetworkManager.SetCharacterActionHand(false);
-                player.PlayerCombatManager.PerformWeaponAcion(player.PlayerInventoryManager.CurrentOHWeapon, player.PlayerInventoryManager.CurrentOHWeapon.LightAttack_OneHanded);
+                PlayerCamera.GetInstance.HandleLocatingLockOnTargets();
+
+                if (PlayerCamera.GetInstance.RightLockOnTarget != null)
+                {
+                    player.PlayerCombatManager.SetTarget(PlayerCamera.GetInstance.RightLockOnTarget);
+                }
             }
         }
     }
@@ -336,39 +338,131 @@ public class PlayerInputManager : MonoBehaviour
         }
     }
 
-    private void HandleLeftLockOnTargetSwitchInput()
+    //  ACTIONS
+    private void HandleDodgeInput()
     {
-        if (seekLeftLockOnInput)
+        if (dodgeInput)
         {
-            seekLeftLockOnInput = false;
+            dodgeInput = false;
 
-            if (player.PlayerNetworkManager.IsLockedOn.Value)
+            //TODO: cant doge when a menu or ui windows is open
+            player.PlayerLocomotionManager.AttemptToPerformDodge();
+        }
+    }
+
+    private void HandleSprintInput()
+    {
+        if (sprintInput)
+        {
+            player.PlayerLocomotionManager.HandleSprinting();
+        }
+        else
+        {
+            player.IsSprinting = false;
+        }
+    }
+
+    private void HandleJumpInput()
+    {
+        if (jumpInput)
+        {
+            jumpInput = false;
+
+            // TODO: DISSABLE IF WE HAVE UI OPEN
+
+            player.PlayerLocomotionManager.AttemptToPerformJump();
+        }
+    }
+
+    // ATTACK ACTION (MAIN HAD)
+    private void HandleMainHandLightAttackInput()
+    {
+        if (mainHand_LightAttackInput)
+        {
+            mainHand_LightAttackInput = false;
+
+            // TODO: DO NOT PERFORME IF WE HAVE UI OPEN
+
+            //player.PlayerNetworkManager.SetCharacterActionHand(true);
+
+            // TODO: TWOHANDING
+            if (player.PlayerInventoryManager.CurrentMHWeapon != null)
             {
-                PlayerCamera.GetInstance.HandleLocatingLockOnTargets();
-
-                if (PlayerCamera.GetInstance.LeftLockOnTarget != null)
-                {
-                    player.PlayerCombatManager.SetTarget(PlayerCamera.GetInstance.LeftLockOnTarget);
-                }
+                player.PlayerNetworkManager.SetCharacterActionHand(true);
+                player.PlayerCombatManager.PerformWeaponAcion(player.PlayerInventoryManager.CurrentMHWeapon, player.PlayerInventoryManager.CurrentMHWeapon.LightAttack_OneHanded);
             }
         }
     }
 
-    private void HandleRightLockOnTargetSwitchInput()
+    private void HandleMainHandHeavyAttackInput()
     {
-        if (seekRightLockOnInput)
+        if (mainHand_HeavyAttackInput)
         {
-            seekRightLockOnInput = false;
+            mainHand_HeavyAttackInput = false;
 
-            if (player.PlayerNetworkManager.IsLockedOn.Value)
+            // TODO: DO NOT PERFORME IF WE HAVE UI OPEN
+
+            //player.PlayerNetworkManager.SetCharacterActionHand(true);
+
+            // TODO: TWOHANDING
+            if (player.PlayerInventoryManager.CurrentMHWeapon != null)
             {
-                PlayerCamera.GetInstance.HandleLocatingLockOnTargets();
-
-                if (PlayerCamera.GetInstance.RightLockOnTarget != null)
-                {
-                    player.PlayerCombatManager.SetTarget(PlayerCamera.GetInstance.RightLockOnTarget);
-                }
+                player.PlayerNetworkManager.SetCharacterActionHand(true);
+                player.PlayerCombatManager.PerformWeaponAcion(player.PlayerInventoryManager.CurrentMHWeapon, player.PlayerInventoryManager.CurrentMHWeapon.HeavyAttack_OneHanded);
             }
+        }
+    }
+
+    private void HandleMainHandChargedHeavyAttackInput()
+    {
+        // we only want to performe this action when we are charinging something in our hand (weapon heavy/spell/...)
+        if (player.IsPerformingAction)
+        {
+            if (player.PlayerNetworkManager.IsUsingMainHand.Value)
+            {
+                player.PlayerNetworkManager.IsChargingAttack.Value = mainHand_ChargedHeavyAttackInput;
+            }
+        }
+    }
+
+    // ATTACK ACTION (OFF HAD)
+    private void HandleOffHandLightAttackInput()
+    {
+        if (offHand_LightAttackInput)
+        {
+            offHand_LightAttackInput = false;
+
+            // TODO: DO NOT PERFORME IF WE HAVE UI OPEN
+
+            //player.PlayerNetworkManager.SetCharacterActionHand(false);
+
+            // TODO: TWOHANDING
+
+            if (player.PlayerInventoryManager.CurrentOHWeapon != null)
+            {
+                player.PlayerNetworkManager.SetCharacterActionHand(false);
+                player.PlayerCombatManager.PerformWeaponAcion(player.PlayerInventoryManager.CurrentOHWeapon, player.PlayerInventoryManager.CurrentOHWeapon.LightAttack_OneHanded);
+            }
+        }
+    }
+
+    private void HandleSwitchMainHandWeaponInput()
+    {
+        if (switchMainHandWeaponInput)
+        {
+            switchMainHandWeaponInput = false;
+            // if (shiftModifierInput)
+            //     return;
+            
+            player.PlayerEquipmentManager.SwitchMainHandWeapon();
+        }
+    }
+    private void HandleSwitchOffHandWeaponInput()
+    {
+        if (switchOffHandWeaponInput)
+        {
+            switchOffHandWeaponInput = false;
+            player.PlayerEquipmentManager.SwitchOffHandWeapon();
         }
     }
 }

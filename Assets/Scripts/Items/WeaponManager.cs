@@ -17,6 +17,9 @@ public class WeaponManager : MonoBehaviour
         meleeDamageCollider.Damage = weapon.Damage;
         meleeDamageCollider.CharacterCausingDMG = characterWieldingWeapon;
 
-        meleeDamageCollider.LightAttackDamageModifier = weapon.LightAttackDamageModifier;
+        meleeDamageCollider.LightAttack_01_DamageModifier = weapon.LightAttack_01_DamageModifier;
+        meleeDamageCollider.HeavyAttack_01_DamageModifier = weapon.HeavyAttack_01_DamageModifier;
+        meleeDamageCollider.ChargedHeavyAttack_01_DamageModifier = weapon.ChargedHeavyAttack_01_DamageModifier;
+
     }
 }

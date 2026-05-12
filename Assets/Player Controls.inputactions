@@ -239,6 +239,33 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Switch Main Hand Weapon",
+                    "type": "Button",
+                    "id": "7fe425af-58f0-494f-acc9-56d69a8399f9",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Switch Off Hand Weapon",
+                    "type": "Button",
+                    "id": "3e055a1e-b1f2-4f12-b0c4-38051c0d06b6",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Shift Modifier",
+                    "type": "PassThrough",
+                    "id": "e18485c0-3cf9-455b-9271-3e79bed7b710",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Hold(pressPoint=0.1)",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -406,6 +433,61 @@
                     "action": "Heavy Main Charged Attack",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "77b1048d-a5f0-4892-9a82-9f146859caa3",
+                    "path": "<Mouse>/scroll/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Switch Main Hand Weapon",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "One Modifier",
+                    "id": "7ac1e689-ad89-4d1d-b49a-aec7951c78cf",
+                    "path": "OneModifier",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Switch Off Hand Weapon",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "modifier",
+                    "id": "754f6d4b-7ace-45bb-b1a4-2ed849797984",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Switch Off Hand Weapon",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "binding",
+                    "id": "89d2925b-2f7c-41b1-a0e0-752a93345eb4",
+                    "path": "<Mouse>/scroll/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Switch Off Hand Weapon",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "4e6503e3-e95e-4d20-b7ef-8aa8dc5a3b5e",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Shift Modifier",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },

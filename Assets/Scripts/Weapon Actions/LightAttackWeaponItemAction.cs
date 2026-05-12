@@ -5,8 +5,8 @@ using UnityEngine;
 public class LightAttackWeaponItemAction :  WeaponItemAction
 {
 
-    [SerializeField] string animationName_Right = "Right_Light_Attack_01";
-    [SerializeField] string animationName_Left = "Left_Light_Attack_01";
+    [SerializeField] string animationName_MainHand = "Main_Light_Attack_01";
+    //[SerializeField] string animationName_OffHand = "Off_Light_Attack_01";
     public override void AttemptToPerformAction(PlayerManager performingPlayer, WeaponItem weapon)
     {
         base.AttemptToPerformAction(performingPlayer, weapon);
@@ -29,11 +29,11 @@ public class LightAttackWeaponItemAction :  WeaponItemAction
     {
         if (performingPlayer.PlayerNetworkManager.IsUsingMainHand.Value)
         {
-            performingPlayer.PlayerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.LightAttack01, animationName_Right, true);
+            performingPlayer.PlayerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.LightAttack_OneHand_01, animationName_MainHand, true);
         }
         if (performingPlayer.PlayerNetworkManager.IsUsingMainHand.Value)
         {
-            //performingPlayer.PlayerAnimatorManager.PlayTargetAttackActionAnimation(animationName_Left, true);
+            //performingPlayer.PlayerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.LightAttack_OneHand_01, animationName_OffHand, true);
         }
     }
 }

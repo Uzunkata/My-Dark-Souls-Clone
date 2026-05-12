@@ -50,8 +50,8 @@ public class PlayerEquipmentManager : CharacterEquipmentManager
 
     public void LoadWeaponsOnBothHands()
     {
-        LoadLeftWeapon();
-        LoadRightWeapon();
+        LoadOffHandWeapon();
+        LoadMainHandWeapon();
     }
 
     private void SwitchWeapon(WeaponItem.WeaponModelSlot hand)
@@ -92,10 +92,10 @@ public class PlayerEquipmentManager : CharacterEquipmentManager
         switch (hand)
         {
             case WeaponItem.WeaponModelSlot.MainHand:
-                player.PlayerAnimatorManager.PlayTargetActionAnimation("Swap_Right_Weapon_01", false, true, true, true);
+                player.PlayerAnimatorManager.PlayTargetActionAnimation("Swap_MainHand_Weapon_01", true, false, true, true);
                 break;
             case WeaponItem.WeaponModelSlot.OffHand:
-                player.PlayerAnimatorManager.PlayTargetActionAnimation("Swap_Left_Weapon_01", false, true, true, true);
+                player.PlayerAnimatorManager.PlayTargetActionAnimation("Swap_OffHand_Weapon_01", true, false, true, true);
                 break;
             default:
                 return;
@@ -114,25 +114,25 @@ public class PlayerEquipmentManager : CharacterEquipmentManager
         }
     }
     // RIGHT WEAPON
-    public void LoadRightWeapon()
+    public void LoadMainHandWeapon()
     {
         WeaponItem mainHandWeapon = player.PlayerInventoryManager.CurrentMHWeapon;
         LoadWeapon(player, mainHandWeapon, ref mainHandWeaponModel, ref mainHandSlot, ref mainHandWeaponManager);
     }
 
-    public void SwitchRightWeapon()
+    public void SwitchMainHandWeapon()
     {
         SwitchWeapon(WeaponItem.WeaponModelSlot.MainHand);
     }
 
     // LEFT WEAPON
-    public void LoadLeftWeapon()
+    public void LoadOffHandWeapon()
     {
         WeaponItem offHandWeapon = player.PlayerInventoryManager.CurrentOHWeapon;
         LoadWeapon(player, offHandWeapon, ref offHandWeaponModel, ref offHandSlot, ref offHandWeaponManager);
     }
 
-    public void SwitchLeftWeapon()
+    public void SwitchOffHandWeapon()
     {
         SwitchWeapon(WeaponItem.WeaponModelSlot.OffHand);
     }

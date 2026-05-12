@@ -30,6 +30,7 @@ public class CharacterNetworkManager : NetworkBehaviour
     protected NetworkVariable<bool> isSprinting = new(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     [SerializeField] protected NetworkVariable<bool> isJumping = new(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     [SerializeField] protected NetworkVariable<bool> isLockedOn = new(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    [SerializeField] protected NetworkVariable<bool> isChargingAttack = new(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
 
     [Header("Stats")]
@@ -76,6 +77,7 @@ public class CharacterNetworkManager : NetworkBehaviour
     }
     public NetworkVariable<bool> IsJumping => isJumping;
     public NetworkVariable<bool> IsLockedOn => isLockedOn;
+    public NetworkVariable<bool> IsChargingAttack => isChargingAttack;
 
     public NetworkVariable<ulong> CurrentTargetNetworkObjectID => currentTargetNetworkObjectID;
 
@@ -126,6 +128,11 @@ public class CharacterNetworkManager : NetworkBehaviour
         {
             character.CharacterCombatManager.CurrentLockedOnTarget = null;
         }
+    }
+
+    public void OnIsChargingAttackChange(bool oldValue, bool newValue)
+    {
+        character.Animator.SetBool("IsChargingAttack", isChargingAttack.Value);
     }
 
     //a server RPC is a funciton called from a client, but executed on the server(the host).

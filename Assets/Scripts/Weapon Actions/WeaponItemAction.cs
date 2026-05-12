@@ -5,7 +5,13 @@ public class WeaponItemAction : ScriptableObject
 {
     public enum AttackType
     {
-        LightAttack01,
+        LightAttack_OneHand_01,
+        LightAttack_OneHand_02,
+        HeavyAttack_OneHanded_01,
+        HeavyAttack_OneHanded_02,
+        ChargedHeavyAttack_OneHanded_01,
+        ChargedHeavyAttack_OneHanded_02,
+
     }
     
     [SerializeField] private int actionID;

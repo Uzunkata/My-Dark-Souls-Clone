@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 using Unity.Collections;
 using System.Collections;
 using Unity.Netcode;
+using System;
 
 [RequireComponent(typeof(PlayerLocomotionManager))]
 [RequireComponent(typeof(PlayerAnimatorManager))]
@@ -24,8 +25,6 @@ public class PlayerManager : CharacterManager
 
     [Header("DEBUG MENU")]
     [SerializeField] private bool respawnPlayer = false;
-    [SerializeField] private bool switchRightWeapon = false;
-    [SerializeField] private bool switchLeftWeapon = false;
 
     public PlayerLocomotionManager PlayerLocomotionManager => playerLocomotionManager;
     public PlayerAnimatorManager PlayerAnimatorManager => playerAnimatorManager;
@@ -143,6 +142,48 @@ public class PlayerManager : CharacterManager
         playerNetworkManager.IsLockedOn.OnValueChanged += playerNetworkManager.OnIsLockedOnChange;
         playerNetworkManager.CurrentTargetNetworkObjectID.OnValueChanged += playerNetworkManager.OnLockOnTargetIDChange;
 
+        // FLAGS
+        playerNetworkManager.IsChargingAttack.OnValueChanged += playerNetworkManager.OnIsChargingAttackChange;
+
+        if (IsOwner && !IsServer)
+        {
+            LoadCharacterSaveData(WorldSaveGameManager.GetInstance.GetCurrentCharacterSave());
+        }
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        base.OnNetworkDespawn();
+
+        NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnectedCallback;
+
+        if (IsOwner)
+        {
+            // UPDATE THE MAX BAR AMOUNT WHEN THE CORESPONDING STAT CHANGES
+            Vitality.OnValueChanged -= SetNewMaxHealthValue;
+            Endurance.OnValueChanged -= SetNewMaxStaminaValue;
+
+            // UPDATES UI STAT BARS WHEN A STAT CHANGES
+            CurrentHealth.OnValueChanged -= PlayerUIManager.GetInstance.PlayerUIHudManager.SetNewHealthValue;
+            CurrentStamina.OnValueChanged -= PlayerUIManager.GetInstance.PlayerUIHudManager.SetNewStaminaValue;
+            CurrentStamina.OnValueChanged -= playerStatsManager.ResetStaminaRegenTimer;
+        }
+
+        // STATS
+        CurrentHealth.OnValueChanged -= playerNetworkManager.CheckHP;
+
+        // EQUIPMENT
+        playerNetworkManager.CurrentMainHandWeaponID.OnValueChanged -= playerNetworkManager.OnCurrentMainHandWeaponIDChange;
+        playerNetworkManager.CurrentOffHandWeaponID.OnValueChanged -= playerNetworkManager.OnCurrentOffHandWeaponIDChange;
+        playerNetworkManager.WeaponInUseID.OnValueChanged -= playerNetworkManager.OnWeaponInUseIDChange;
+
+        // LOCK ON
+        playerNetworkManager.IsLockedOn.OnValueChanged -= playerNetworkManager.OnIsLockedOnChange;
+        playerNetworkManager.CurrentTargetNetworkObjectID.OnValueChanged -= playerNetworkManager.OnLockOnTargetIDChange;
+
+        // FLAGS
+        playerNetworkManager.IsChargingAttack.OnValueChanged -= playerNetworkManager.OnIsChargingAttackChange;
+
         if (IsOwner && !IsServer)
         {
             LoadCharacterSaveData(WorldSaveGameManager.GetInstance.GetCurrentCharacterSave());
@@ -234,18 +275,6 @@ public class PlayerManager : CharacterManager
         {
             respawnPlayer = false;
             ReviveCharacter();
-        }
-
-        if (switchRightWeapon)
-        {
-            switchRightWeapon = false;
-            playerEquipmentManager.SwitchRightWeapon();
-        }
-
-        if (switchLeftWeapon)
-        {
-            switchLeftWeapon = false;
-            playerEquipmentManager.SwitchLeftWeapon();
         }
     }
 
