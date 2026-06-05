@@ -196,6 +196,8 @@ public class CharacterManager : NetworkBehaviour
         applyRootMotion = false;
         canMove = true;
         canRotate = true;
+        //characterLocomotionManager.IsRoll
+        characterCombatManager.DissableCanDoCombo();
 
         if (IsOwner)
         {

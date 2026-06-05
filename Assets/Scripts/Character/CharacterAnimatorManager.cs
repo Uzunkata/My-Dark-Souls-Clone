@@ -78,6 +78,7 @@ public class CharacterAnimatorManager : MonoBehaviour
         // TELL THE NETWORK WE ARE IN ATTACKING FLAG
 
         character.CharacterCombatManager.CurrentAttackType = attackType;
+        character.CharacterCombatManager.LastAttackAnimationPerformed = targetAnimation;
         character.ApplyRootMotion = applyRootMotion;
         character.Animator.CrossFade(targetAnimation, normalizedTransitionDuration);
         character.IsPerformingAction = isAction;

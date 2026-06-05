@@ -5,8 +5,12 @@ using UnityEngine;
 public class LightAttackWeaponItemAction :  WeaponItemAction
 {
 
-    [SerializeField] string animationName_MainHand = "Main_Light_Attack_01";
+    [SerializeField] public const string animationName_MainHand_01 = "Main_Light_Attack_01";
+    [SerializeField] public const string animationName_MainHand_02 = "Main_Light_Attack_02";
+
     //[SerializeField] string animationName_OffHand = "Off_Light_Attack_01";
+
+
     public override void AttemptToPerformAction(PlayerManager performingPlayer, WeaponItem weapon)
     {
         base.AttemptToPerformAction(performingPlayer, weapon);
@@ -27,13 +31,29 @@ public class LightAttackWeaponItemAction :  WeaponItemAction
 
     private void PerformLightAttackAction(PlayerManager performingPlayer, WeaponItem weapon)
     {
-        if (performingPlayer.PlayerNetworkManager.IsUsingMainHand.Value)
+        if (performingPlayer.PlayerCombatManager.CanComboWithMainHandWeapon && performingPlayer.IsPerformingAction)
         {
-            performingPlayer.PlayerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.LightAttack_OneHand_01, animationName_MainHand, true);
+            if (performingPlayer.CharacterCombatManager.LastAttackAnimationPerformed == animationName_MainHand_01)
+            {
+                performingPlayer.PlayerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.LightAttack_OneHand_02, animationName_MainHand_02, true);
+            }
+            else
+            {
+                performingPlayer.PlayerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.LightAttack_OneHand_01, animationName_MainHand_01, true);
+            }
         }
-        if (performingPlayer.PlayerNetworkManager.IsUsingMainHand.Value)
+        else if (!performingPlayer.IsPerformingAction)
         {
-            //performingPlayer.PlayerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.LightAttack_OneHand_01, animationName_OffHand, true);
+            performingPlayer.PlayerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.LightAttack_OneHand_01, animationName_MainHand_01, true);
         }
+
+        // if (performingPlayer.PlayerNetworkManager.IsUsingMainHand.Value)
+        // {
+        //     //performingPlayer.PlayerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.LightAttack_OneHand_01, animationName_MainHand_01, true);
+        // }
+        // if (performingPlayer.PlayerNetworkManager.IsUsingOffHand.Value)
+        // {
+        //     //performingPlayer.PlayerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.LightAttack_OneHand_01, animationName_OffHand, true);
+        // }
     }
 }

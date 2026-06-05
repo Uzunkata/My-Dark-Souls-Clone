@@ -192,7 +192,7 @@
                     "id": "0e1c07d7-2f67-48e3-b2b1-b9c6f4123690",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "Press",
+                    "interactions": "Tap",
                     "initialStateCheck": false
                 },
                 {
@@ -310,17 +310,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "Jump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "35a83901-ca51-493e-95ad-5a3952eaf676",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Light Main Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -486,6 +475,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Shift Modifier",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1c863021-d8a9-4ee9-8e50-afec3be1b5bc",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Light Main Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

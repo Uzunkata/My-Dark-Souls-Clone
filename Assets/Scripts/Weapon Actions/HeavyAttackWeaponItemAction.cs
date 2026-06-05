@@ -5,7 +5,9 @@ using UnityEngine;
 public class HeavyAttackWeaponItemAction :  WeaponItemAction
 {
 
-    [SerializeField] string animationName_MainHand = "Main_Heavy_Attack_01";
+    [SerializeField] string animationName_MainHand_01 = "Main_Heavy_Attack_01";
+    [SerializeField] string animationName_MainHand_02 = "Main_Heavy_Attack_02";
+
     //[SerializeField] string animationName_OffHand = "Off_Heavy_Attack_01";
     public override void AttemptToPerformAction(PlayerManager performingPlayer, WeaponItem weapon)
     {
@@ -27,13 +29,30 @@ public class HeavyAttackWeaponItemAction :  WeaponItemAction
 
     private void PerformHeavyAttackAction(PlayerManager performingPlayer, WeaponItem weapon)
     {
-        if (performingPlayer.PlayerNetworkManager.IsUsingMainHand.Value)
+        if (performingPlayer.PlayerCombatManager.CanComboWithMainHandWeapon && performingPlayer.IsPerformingAction)
         {
-            performingPlayer.PlayerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.HeavyAttack_OneHanded_01, animationName_MainHand, true);
+            if (performingPlayer.CharacterCombatManager.LastAttackAnimationPerformed == animationName_MainHand_01)
+            {
+                performingPlayer.PlayerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.HeavyAttack_OneHanded_02, animationName_MainHand_02, true);
+            }
+            else
+            {
+                performingPlayer.PlayerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.HeavyAttack_OneHanded_01, animationName_MainHand_01, true);
+            }
         }
-        if (performingPlayer.PlayerNetworkManager.IsUsingMainHand.Value)
+        else if (!performingPlayer.IsPerformingAction)
         {
-            //performingPlayer.PlayerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.HeavyAttack_OneHanded_01, animationName_OffHand, true);
+            performingPlayer.PlayerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.HeavyAttack_OneHanded_01, animationName_MainHand_01, true);
         }
+
+
+        // if (performingPlayer.PlayerNetworkManager.IsUsingMainHand.Value)
+        // {
+        //     performingPlayer.PlayerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.HeavyAttack_OneHanded_01, animationName_MainHand, true);
+        // }
+        // if (performingPlayer.PlayerNetworkManager.IsUsingMainHand.Value)
+        // {
+        //     //performingPlayer.PlayerAnimatorManager.PlayTargetAttackActionAnimation(AttackType.HeavyAttack_OneHanded_01, animationName_OffHand, true);
+        // }
     }
 }

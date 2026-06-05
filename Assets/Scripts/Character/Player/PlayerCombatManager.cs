@@ -11,11 +11,26 @@ public class PlayerCombatManager : CharacterCombatManager
     [Header("Weapons")]
     [SerializeField] private WeaponItem weaponInUse;
 
+    [Header("Flags")]
+    [SerializeField] private bool canComboWithMainHandWeapon = false;
+    [SerializeField] private bool canComboWithOffHandWeapon = false;
+
+
     #region ENCAPSULATION
     public WeaponItem WeaponInUse
     {
         get => weaponInUse;
         set => weaponInUse = value;
+    }
+    public bool CanComboWithMainHandWeapon
+    {
+        get => canComboWithMainHandWeapon;
+        set => canComboWithMainHandWeapon = value;
+    }
+    public bool CanComboWithOffHandWeapon
+    {
+        get => canComboWithOffHandWeapon;
+        set => canComboWithOffHandWeapon = value;
     }
 
     #endregion
@@ -72,6 +87,24 @@ public class PlayerCombatManager : CharacterCombatManager
         {
             PlayerCamera.GetInstance.SetLockedCameraHeight();
         }
+    }
+
+    public override void EnableCanDoCombo()
+    {
+        if (player.PlayerNetworkManager.IsUsingMainHand.Value)
+        {
+            canComboWithMainHandWeapon = true;
+        }
+        else if (player.PlayerNetworkManager.IsUsingOffHand.Value)
+        {
+            canComboWithOffHandWeapon = true;
+        }
+    }
+
+    public override void DissableCanDoCombo()
+    {
+        canComboWithMainHandWeapon = false;
+        canComboWithOffHandWeapon = false;
     }
 }
 

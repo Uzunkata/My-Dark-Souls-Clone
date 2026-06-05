@@ -15,6 +15,9 @@ public class CharacterCombatManager : NetworkBehaviour
     [Header("Lock On Transform")]
     [SerializeField] private Transform lockOnTransform;
 
+    [Header("Last Attack Animation Performed")]
+    [SerializeField] private string lastAttackAnimationPerformed;
+
     #region ENCAPSULATION
 
     public WeaponItemAction.AttackType CurrentAttackType
@@ -22,11 +25,15 @@ public class CharacterCombatManager : NetworkBehaviour
         get => currentAttackType;
         set => currentAttackType = value;
     }
-
     public CharacterManager CurrentLockedOnTarget
     {
         get => currentLockedOnTarget;
         set => currentLockedOnTarget = value;
+    }
+    public string LastAttackAnimationPerformed
+    {
+        get => lastAttackAnimationPerformed;
+        set => lastAttackAnimationPerformed = value;
     }
 
     public Transform LockOnTransform => lockOnTransform;
@@ -52,5 +59,12 @@ public class CharacterCombatManager : NetworkBehaviour
         {
             currentLockedOnTarget = null;
         }
+    }
+
+    public virtual void EnableCanDoCombo()
+    {
+    }
+    public virtual void DissableCanDoCombo()
+    {
     }
 }

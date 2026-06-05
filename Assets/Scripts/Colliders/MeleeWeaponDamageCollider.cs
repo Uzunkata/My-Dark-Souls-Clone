@@ -6,9 +6,10 @@ public class MeleeWeaponDamageCollider : DamageCollider
     [SerializeField] private CharacterManager characterCausingDMG;
 
     [Header("Weapon Attack Modifiers")]
-    [SerializeField] private float lightAttack_01_DamageModifier;
-    [SerializeField] private float heavyAttack_01_DamageModifier;
-    [SerializeField] private float chargedHeavyAttack_01_DamageModifier;
+    [SerializeField] private DamageModifiers damageModifiers;
+    // [SerializeField] private float lightAttack_01_DamageModifier;
+    // [SerializeField] private float heavyAttack_01_DamageModifier;
+    // [SerializeField] private float chargedHeavyAttack_01_DamageModifier;
 
     #region ENCAPSULATION
 
@@ -17,21 +18,27 @@ public class MeleeWeaponDamageCollider : DamageCollider
         get => characterCausingDMG;
         set => characterCausingDMG = value;
     }
-    public float LightAttack_01_DamageModifier
+    public DamageModifiers DamageModifiers
     {
-        get => lightAttack_01_DamageModifier;
-        set => lightAttack_01_DamageModifier = value;
+        get => damageModifiers;
+        set => damageModifiers = value;
     }
-    public float HeavyAttack_01_DamageModifier
-    {
-        get => heavyAttack_01_DamageModifier;
-        set => heavyAttack_01_DamageModifier = value;
-    }
-    public float ChargedHeavyAttack_01_DamageModifier
-    {
-        get => chargedHeavyAttack_01_DamageModifier;
-        set => chargedHeavyAttack_01_DamageModifier = value;
-    }
+    
+    // public float LightAttack_01_DamageModifier
+    // {
+    //     get => lightAttack_01_DamageModifier;
+    //     set => lightAttack_01_DamageModifier = value;
+    // }
+    // public float HeavyAttack_01_DamageModifier
+    // {
+    //     get => heavyAttack_01_DamageModifier;
+    //     set => heavyAttack_01_DamageModifier = value;
+    // }
+    // public float ChargedHeavyAttack_01_DamageModifier
+    // {
+    //     get => chargedHeavyAttack_01_DamageModifier;
+    //     set => chargedHeavyAttack_01_DamageModifier = value;
+    // }
 
     #endregion
 
@@ -74,20 +81,9 @@ public class MeleeWeaponDamageCollider : DamageCollider
         damageEffect.ContactPoint = contactPoint;
         damageEffect.AngleHitFrom = Vector3.SignedAngle(characterCausingDMG.transform.forward, damagedTarget.transform.forward, Vector3.up);
 
-        switch(characterCausingDMG.CharacterCombatManager.CurrentAttackType)
-        {
-            case WeaponItemAction.AttackType.LightAttack_OneHand_01:
-                ApplyAttackDamageModifiers(lightAttack_01_DamageModifier, damageEffect);
-                break;
-            case WeaponItemAction.AttackType.HeavyAttack_OneHanded_01:
-                ApplyAttackDamageModifiers(heavyAttack_01_DamageModifier, damageEffect);
-                break;
-                case WeaponItemAction.AttackType.ChargedHeavyAttack_OneHanded_01:
-                ApplyAttackDamageModifiers(chargedHeavyAttack_01_DamageModifier, damageEffect);
-                break;
-            default:
-                break;
-        }
+        float attackTypeDamageModifier = FindAttackTypeDamageModifier();
+                                                                                                                    Debug.Log("AAAAA: " + attackTypeDamageModifier);
+        ApplyAttackDamageModifiers(attackTypeDamageModifier, damageEffect);
 
         //damageTarget.CharacterEffectsManager.ProcessEffect(damageEffect);
 
@@ -105,6 +101,34 @@ public class MeleeWeaponDamageCollider : DamageCollider
                 damageEffect.ContactPoint.y,
                 damageEffect.ContactPoint.z);
         }
+    }
+
+    private float FindAttackTypeDamageModifier()
+    {
+        float result = 0;
+        switch (characterCausingDMG.CharacterCombatManager.CurrentAttackType)
+        {
+            case WeaponItemAction.AttackType.LightAttack_OneHand_01:
+                result = damageModifiers.LightAttack_01_DamageModifier;
+                break;
+            case WeaponItemAction.AttackType.LightAttack_OneHand_02:
+                result = damageModifiers.LightAttack_02_DamageModifier;
+                break;
+            case WeaponItemAction.AttackType.HeavyAttack_OneHanded_01:
+                result = damageModifiers.HeavyAttack_01_DamageModifier;
+                break;
+            case WeaponItemAction.AttackType.HeavyAttack_OneHanded_02:
+                result = damageModifiers.HeavyAttack_02_DamageModifier;
+                break;
+            case WeaponItemAction.AttackType.ChargedHeavyAttack_OneHanded_01:
+                result = damageModifiers.ChargedHeavyAttack_01_DamageModifier;
+                break;
+            case WeaponItemAction.AttackType.ChargedHeavyAttack_OneHanded_02:
+                result = damageModifiers.ChargedHeavyAttack_02_DamageModifier;
+                break;
+        }
+
+        return result;
     }
 
     private void ApplyAttackDamageModifiers(float modifier, TakeHealthDamageEffect damageEffect)

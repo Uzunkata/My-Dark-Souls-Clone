@@ -41,7 +41,7 @@ public class PlayerInputManager : MonoBehaviour
     [SerializeField] private bool jumpInput = false;
     [SerializeField] private bool switchMainHandWeaponInput = false;
     [SerializeField] private bool switchOffHandWeaponInput = false;
-    //[SerializeField] private bool shiftModifierInput = false;
+    [SerializeField] private bool shiftModifierInput = false;
 
 
     [Header("Player Attack Action Input")]
@@ -117,9 +117,9 @@ public class PlayerInputManager : MonoBehaviour
             playerControls = new PlayerControls();
 
             // MODIFIERS
-            //ShiftModifierInput = Keyboard.current.leftShiftKey.isPressed;
-            // playerControls.PlayerActions.ShiftModifier.performed += i => shiftModifierInput = true;
-            //playerControls.PlayerActions.ShiftModifier.canceled += i => ShiftModifierInput = false;
+            //shiftModifierInput = Keyboard.current.leftShiftKey.isPressed;
+            playerControls.PlayerActions.ShiftModifier.performed += i => shiftModifierInput = true;
+            playerControls.PlayerActions.ShiftModifier.canceled += i => shiftModifierInput = false;
 
             // MOVEMENT
             playerControls.PlayerMovement.Movement.performed += i => playerMovementInput = i.ReadValue<Vector2>();
@@ -381,6 +381,8 @@ public class PlayerInputManager : MonoBehaviour
         {
             mainHand_LightAttackInput = false;
 
+            if (shiftModifierInput)
+                return;
             // TODO: DO NOT PERFORME IF WE HAVE UI OPEN
 
             //player.PlayerNetworkManager.SetCharacterActionHand(true);
@@ -451,8 +453,8 @@ public class PlayerInputManager : MonoBehaviour
         if (switchMainHandWeaponInput)
         {
             switchMainHandWeaponInput = false;
-            // if (shiftModifierInput)
-            //     return;
+            if (shiftModifierInput)
+                return;
             
             player.PlayerEquipmentManager.SwitchMainHandWeapon();
         }
